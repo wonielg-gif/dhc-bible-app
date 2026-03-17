@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERL — Walk with Christ / 그리스도와 동행 / Caminando con Cristo</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a365d 0%, #2c5282 50%, #2b6cb0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 32px 24px 28px;
+            max-width: 460px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .logo { font-size: 2.8em; margin-bottom: 8px; }
+        .title-main { font-size: 1.3em; font-weight: 800; color: #1a365d; margin-bottom: 2px; }
+        .title-sub  { font-size: 0.88em; color: #4a90d9; font-weight: 600; margin-bottom: 4px; }
+        .erl-label  { font-size: 0.75em; color: #a0aec0; margin-bottom: 22px; }
+
+        /* 언어 탭 */
+        .lang-tabs { display: flex; gap: 6px; justify-content: center; margin-bottom: 20px; }
+        .lang-tab {
+            padding: 7px 18px; border-radius: 20px; border: 2px solid #e2e8f0;
+            font-size: 0.82em; font-weight: 700; cursor: pointer; background: white;
+            color: #718096; transition: all 0.2s;
+        }
+        .lang-tab.active { background: #1a365d; color: white; border-color: #1a365d; }
+
+        /* 앱 블록 */
+        .app-block { display: none; }
+        .app-block.active { display: block; }
+        .os-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .btn {
+            display: flex; flex-direction: column; align-items: center;
+            padding: 16px 10px; border-radius: 14px; text-decoration: none;
+            font-weight: 700; font-size: 0.88em; transition: transform 0.15s, box-shadow 0.15s;
+            border: none; cursor: pointer; color: white;
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+        .btn .os-icon { font-size: 1.6em; margin-bottom: 5px; }
+        .btn .os-name { font-size: 0.78em; opacity: 0.85; margin-top: 2px; }
+
+        .btn-android { background: linear-gradient(135deg, #38a169, #276749); }
+        .btn-ios     { background: linear-gradient(135deg, #805ad5, #553c9a); }
+
+        .divider { height: 1px; background: #e2e8f0; margin: 18px 0; }
+        .footer { margin-top: 18px; font-size: 0.68em; color: #a0aec0; line-height: 1.8; }
+        .badge {
+            display: inline-block; background: #ebf8ff; color: #2b6cb0;
+            border-radius: 20px; padding: 4px 12px;
+            font-size: 0.75em; font-weight: 700; margin-bottom: 20px;
+        }
+        .section-label {
+            font-size: 0.72em; font-weight: 700; color: #a0aec0;
+            letter-spacing: 1px; text-transform: uppercase;
+            margin-bottom: 10px; text-align: left;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="logo">🕊️</div>
+    <div class="title-main">그리스도와 동행</div>
+    <div class="title-sub">Walk with Christ · Caminando con Cristo</div>
+    <div class="erl-label">Edward Research Lab (ERL) · v4.6</div>
+    <div class="badge">📖 Bible · Discipleship · Spiritual Growth</div>
+
+    <!-- 언어 탭 -->
+    <div class="lang-tabs">
+        <button class="lang-tab active" onclick="switchLang('ko')">🇰🇷 한국어</button>
+        <button class="lang-tab" onclick="switchLang('en')">🇺🇸 English</button>
+        <button class="lang-tab" onclick="switchLang('es')">🇪🇸 Español</button>
+    </div>
+
+    <!-- 한국어 -->
+    <div class="app-block active" id="block-ko">
+        <div class="section-label">기기를 선택하세요</div>
+        <div class="os-row">
+            <a href="android_ko.html" class="btn btn-android">
+                <span class="os-icon">🤖</span>
+                Android
+                <span class="os-name">한국어</span>
+            </a>
+            <a href="iphone_ko.html" class="btn btn-ios">
+                <span class="os-icon">🍎</span>
+                iPhone
+                <span class="os-name">한국어</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- English -->
+    <div class="app-block" id="block-en">
+        <div class="section-label">Select your device</div>
+        <div class="os-row">
+            <a href="android_en.html" class="btn btn-android">
+                <span class="os-icon">🤖</span>
+                Android
+                <span class="os-name">English</span>
+            </a>
+            <a href="iphone_en.html" class="btn btn-ios">
+                <span class="os-icon">🍎</span>
+                iPhone
+                <span class="os-name">English</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Español -->
+    <div class="app-block" id="block-es">
+        <div class="section-label">Selecciona tu dispositivo</div>
+        <div class="os-row">
+            <a href="android_es.html" class="btn btn-android">
+                <span class="os-icon">🤖</span>
+                Android
+                <span class="os-name">Español</span>
+            </a>
+            <a href="iphone_es.html" class="btn btn-ios">
+                <span class="os-icon">🍎</span>
+                iPhone
+                <span class="os-name">Español</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="footer">
+        © 2026 Edward Research Lab (ERL) · CC BY-NC 4.0<br>
+        무단 상업적 배포를 금합니다 · No unauthorized commercial distribution<br>
+        Prohibida la distribución comercial no autorizada
+    </div>
+</div>
+
+<script>
+function switchLang(lang) {
+    document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.app-block').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('block-' + lang).classList.add('active');
+    localStorage.setItem('erl_lang', lang);
+}
+// 마지막 선택 언어 복원
+const savedLang = localStorage.getItem('erl_lang');
+if (savedLang && ['ko','en','es'].includes(savedLang)) {
+    document.querySelectorAll('.lang-tab').forEach((t,i) => {
+        const l = ['ko','en','es'][i];
+        t.classList.toggle('active', l === savedLang);
+    });
+    document.querySelectorAll('.app-block').forEach(b => b.classList.remove('active'));
+    document.getElementById('block-' + savedLang).classList.add('active');
+}
+</script>
+</body>
+</html>
