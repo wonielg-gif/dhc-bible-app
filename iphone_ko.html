@@ -3507,7 +3507,16 @@
             if (navBtn) navBtn.classList.add('active');
 
             // ④ 탭별 후처리
-            if (name === 'disciple') { setTimeout(restoreDetailsState, 50); }
+            if (name === 'disciple') { 
+                setTimeout(function(){
+                    renderBibleHistory();
+                    renderPrayerList();
+                    renderWorshipHistory();
+                    renderThanksHistory();
+                    renderPrayMemoHistory();
+                    restoreDetailsState();
+                }, 50); 
+            }
             if (name === 'bible-plan') {
                 if (typeof renderBibleToday === 'function') {
                     bibleState.selDay = bibleState.selDay || getTodayDay();
@@ -3605,7 +3614,23 @@
             if (overlay) overlay.remove();
         }
 
-        window.onload = function() { init(); checkAppUpdate(); initBiblePlan(); updateStatsPanel(); renderYearlyTable(); renderPrayLogs(); };
+        window.onload = function() { 
+            init(); 
+            checkAppUpdate(); 
+            initBiblePlan(); 
+            updateStatsPanel(); 
+            renderYearlyTable(); 
+            renderPrayLogs();
+            // 일지 기록 초기 표시 보장 (딜레이 후 재렌더링)
+            setTimeout(function(){
+                renderBibleHistory();
+                renderPrayerList();
+                renderWorshipHistory();
+                renderThanksHistory();
+                renderPrayMemoHistory();
+                restoreDetailsState();
+            }, 300);
+        };
 
         // ========== 마음골짜기 8축 × 24문항 진단 시스템 (v4.6) ==========
         
