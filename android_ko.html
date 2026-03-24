@@ -3510,6 +3510,11 @@
                     renderWorshipHistory();
                     renderThanksHistory();
                     renderPrayMemoHistory();
+                    // 일지 container 부모 details 강제 open
+                    ['bible-history','worship-history','thanks-history',
+                     'pray-memo-history','prayer-list-container'].forEach(function(id){
+                        openParentDetails(id);
+                    });
                     restoreDetailsState();
                 }, 50); 
             }
@@ -3617,13 +3622,18 @@
             updateStatsPanel(); 
             renderYearlyTable(); 
             renderPrayLogs();
-            // 일지 기록 초기 표시 보장 (딜레이 후 재렌더링)
+            // 일지 기록 초기 표시 보장 (딜레이 후 재렌더링 + 강제 open)
             setTimeout(function(){
                 renderBibleHistory();
                 renderPrayerList();
                 renderWorshipHistory();
                 renderThanksHistory();
                 renderPrayMemoHistory();
+                // 모든 일지 container의 부모 details 강제 open
+                ['bible-history','worship-history','thanks-history',
+                 'pray-memo-history','prayer-list-container'].forEach(function(id){
+                    openParentDetails(id);
+                });
                 restoreDetailsState();
             }, 300);
         };
