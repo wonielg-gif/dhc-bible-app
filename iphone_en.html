@@ -2161,6 +2161,19 @@
             loadFromStorage();
             updateStats();
             initV2();
+            // 앱 시작 시 제자훈련 탭 일지 강제 표시
+            setTimeout(function(){
+                try { renderBibleHistory(); } catch(e){}
+                try { renderPrayerList(); } catch(e){}
+                try { renderWorshipHistory(); } catch(e){}
+                try { renderThanksHistory(); } catch(e){}
+                try { renderPrayMemoHistory(); } catch(e){}
+                try { openParentDetails('bible-history'); } catch(e){}
+                try { openParentDetails('worship-history'); } catch(e){}
+                try { openParentDetails('thanks-history'); } catch(e){}
+                try { openParentDetails('pray-memo-history'); } catch(e){}
+                try { openParentDetails('prayer-list-container'); } catch(e){}
+            }, 800);
         }
 
         // ========== DCP 렌더링 ==========
