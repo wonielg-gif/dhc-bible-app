@@ -3027,12 +3027,68 @@
             container.innerHTML = entries.sort((a,b) => new Date(b.date)-new Date(a.date)).map(e => {
                 const d = new Date(e.date).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
                 return '<div class="journal-entry">'
+                    + '<div style="display:flex;gap:4px;float:right;">'
+                    + '<button class="j-del" style="background:#f6ad55;color:white;" onclick="editBibleEntry(\'' + e.id + '\')" title="수정">✏️</button>'
                     + '<button class="j-del" onclick="deleteBibleEntry(\'' + e.id + '\')">✕</button>'
+                    + '</div>'
                     + '<div class="j-date">' + d + '</div>'
                     + (e.verse ? '<div class="j-verse">📖 ' + e.verse + '</div>' : '')
                     + (e.note ? '<div class="j-text">' + e.note.replace(/\n/g,'<br>') + '</div>' : '')
                     + '</div>';
             }).join('');
+        }
+
+        
+        // ========== 편집 기능 ==========
+        function editBibleEntry(id) {
+            const entries = JSON.parse(localStorage.getItem('ewgf_bible_journal') || '[]');
+            const e = entries.find(x => x.id === id);
+            if (!e) return;
+            const verseEl = document.getElementById('bible-verse-input');
+            const noteEl = document.getElementById('bible-note-input');
+            if (!verseEl || !noteEl) return;
+            verseEl.value = e.verse || '';
+            noteEl.value = e.note || '';
+            // 기존 항목 삭제 후 저장 시 새로 추가되도록
+            const newEntries = entries.filter(x => x.id !== id);
+            localStorage.setItem('ewgf_bible_journal', JSON.stringify(newEntries));
+            renderBibleHistory();
+            // 입력창으로 스크롤
+            verseEl.scrollIntoView({behavior:'smooth', block:'center'});
+            verseEl.focus();
+            openParentDetails('bible-history');
+        }
+
+        function editThanksEntry(id) {
+            const entries = JSON.parse(localStorage.getItem('ewgf_thanks_journal') || '[]');
+            const e = entries.find(x => x.id === id);
+            if (!e) return;
+            const noteEl = document.getElementById('thanks-note-input');
+            if (!noteEl) return;
+            noteEl.value = e.note || '';
+            const newEntries = entries.filter(x => x.id !== id);
+            localStorage.setItem('ewgf_thanks_journal', JSON.stringify(newEntries));
+            renderThanksHistory();
+            noteEl.scrollIntoView({behavior:'smooth', block:'center'});
+            noteEl.focus();
+            openParentDetails('thanks-history');
+        }
+
+        function editPrayer(id) {
+            const prayers = JSON.parse(localStorage.getItem('ewgf_prayers') || '[]');
+            const p = prayers.find(x => x.id === id);
+            if (!p) return;
+            const titleEl = document.getElementById('prayer-title-input');
+            const detailEl = document.getElementById('prayer-detail-input');
+            const catEl = document.getElementById('prayer-category-select');
+            if (titleEl) titleEl.value = p.title || '';
+            if (detailEl) detailEl.value = p.detail || '';
+            if (catEl) catEl.value = p.category || 'personal';
+            const newPrayers = prayers.filter(x => x.id !== id);
+            localStorage.setItem('ewgf_prayers', JSON.stringify(newPrayers));
+            renderPrayerList();
+            if (titleEl) { titleEl.scrollIntoView({behavior:'smooth', block:'center'}); titleEl.focus(); }
+            openParentDetails('prayer-list-container');
         }
 
         function deleteBibleEntry(id) {
@@ -3081,7 +3137,10 @@
                 return '<div class="prayer-req">'
                     + '<div style="display:flex;justify-content:space-between;align-items:center;">'
                     + '<div class="pr-title">' + emoji + ' ' + p.title + '</div>'
+                    + '<div style="display:flex;gap:4px;">'
+                    + '<button onclick="editPrayer(\'' + p.id + '\')" style="background:#f6ad55;border:none;color:white;border-radius:6px;padding:2px 8px;cursor:pointer;font-size:0.85em;">✏️</button>'
                     + '<button onclick="deletePrayer(\'' + p.id + '\')" style="background:none;border:none;color:#e53e3e;cursor:pointer;">✕</button>'
+                    + '</div>'
                     + '</div>'
                     + (p.detail ? '<div style="color:#4a5568;font-size:0.9em;margin-top:2px;">' + p.detail + '</div>' : '')
                     + '<div class="pr-dates">🗓 Start: ' + p.startDate
@@ -3218,7 +3277,10 @@
             container.innerHTML = entries.sort((a,b) => new Date(b.date)-new Date(a.date)).map(e => {
                 const d = new Date(e.date).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
                 return '<div class="journal-entry" style="border-left-color:#d69e2e;">'
+                    + '<div style="display:flex;gap:4px;float:right;">'
+                    + '<button class="j-del" style="background:#f6ad55;color:white;" onclick="editThanksEntry(\'' + e.id + '\')" title="수정">✏️</button>'
                     + '<button class="j-del" onclick="deleteThanksEntry(\'' + e.id + '\')">✕</button>'
+                    + '</div>'
                     + '<div class="j-date">🙌 ' + d + '</div>'
                     + '<div class="j-text">' + e.note.replace(/\n/g,'<br>') + '</div>'
                     + '</div>';
