@@ -3027,9 +3027,9 @@
             container.innerHTML = entries.sort((a,b) => new Date(b.date)-new Date(a.date)).map(e => {
                 const d = new Date(e.date).toLocaleDateString('es-ES', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
                 return '<div class="journal-entry">'
-                    + '<div style="display:flex;gap:4px;float:right;">'
-                    + '<button class="j-del" style="background:#f6ad55;color:white;" onclick="editBibleEntry(\'' + e.id + '\')" title="수정">✏️</button>'
-                    + '<button class="j-del" onclick="deleteBibleEntry(\'' + e.id + '\')">✕</button>'
+                    + '<div style="display:flex;gap:12px;float:right;">'
+                    + '<button style="background:#f6ad55;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="editBibleEntry(\'' + e.id + '\')" title="수정">✏️ 수정</button>'
+                    + '<button style="background:#e53e3e;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="deleteBibleEntry(\'' + e.id + '\')">🗑 삭제</button>'
                     + '</div>'
                     + '<div class="j-date">' + d + '</div>'
                     + (e.verse ? '<div class="j-verse">📖 ' + e.verse + '</div>' : '')
@@ -3137,9 +3137,9 @@
                 return '<div class="prayer-req">'
                     + '<div style="display:flex;justify-content:space-between;align-items:center;">'
                     + '<div class="pr-title">' + emoji + ' ' + p.title + '</div>'
-                    + '<div style="display:flex;gap:4px;">'
-                    + '<button onclick="editPrayer(\'' + p.id + '\')" style="background:#f6ad55;border:none;color:white;border-radius:6px;padding:2px 8px;cursor:pointer;font-size:0.85em;">✏️</button>'
-                    + '<button onclick="deletePrayer(\'' + p.id + '\')" style="background:none;border:none;color:#e53e3e;cursor:pointer;">✕</button>'
+                    + '<div style="display:flex;gap:10px;">'
+                    + '<button onclick="editPrayer(\'' + p.id + '\')" style="background:#f6ad55;border:none;color:white;border-radius:8px;padding:6px 14px;font-size:0.95em;cursor:pointer;">✏️ 수정</button>'
+                    + '<button onclick="deletePrayer(\'' + p.id + '\')" style="background:#e53e3e;border:none;color:white;border-radius:8px;padding:6px 14px;font-size:0.95em;cursor:pointer;">🗑 삭제</button>'
                     + '</div>'
                     + '</div>'
                     + (p.detail ? '<div style="color:#4a5568;font-size:0.9em;margin-top:2px;">' + p.detail + '</div>' : '')
@@ -3277,9 +3277,9 @@
             container.innerHTML = entries.sort((a,b) => new Date(b.date)-new Date(a.date)).map(e => {
                 const d = new Date(e.date).toLocaleDateString('es-ES', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
                 return '<div class="journal-entry" style="border-left-color:#d69e2e;">'
-                    + '<div style="display:flex;gap:4px;float:right;">'
-                    + '<button class="j-del" style="background:#f6ad55;color:white;" onclick="editThanksEntry(\'' + e.id + '\')" title="수정">✏️</button>'
-                    + '<button class="j-del" onclick="deleteThanksEntry(\'' + e.id + '\')">✕</button>'
+                    + '<div style="display:flex;gap:12px;float:right;">'
+                    + '<button style="background:#f6ad55;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="editThanksEntry(\'' + e.id + '\')" title="수정">✏️ 수정</button>'
+                    + '<button style="background:#e53e3e;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="deleteThanksEntry(\'' + e.id + '\')">🗑 삭제</button>'
                     + '</div>'
                     + '<div class="j-date">🙌 ' + d + '</div>'
                     + '<div class="j-text">' + e.note.replace(/\n/g,'<br>') + '</div>'

@@ -1563,32 +1563,30 @@
 
     <!-- 마침 준비 -->
     <div id="content-erp" class="content">
-        <h2>⚰️ ERP - 마침 준비</h2>
+        <h2>⚰️ 나의 마침 준비</h2>
 
         <div class="alert alert-info">
             인생의 마지막을 어떻게 맞이할지 미리 준비하세요.
         </div>
 
-        <h3>📊 3가지 ERP 유형</h3>
+        <h3>📊 마침의 2가지 유형</h3>
         <div style="font-size: 0.85em; line-height: 1.8; background: white; padding: 14px; border-radius: 8px; margin: 12px 0;">
-            <strong>ERP-P (바울형):</strong> 순교/사명 완주<br>
-            <strong>ERP-E (엘리사형):</strong> 자연사/유산 전수 ⭐<br>
-            <strong>ERP-T (에녹형):</strong> 승천 (주권적)
+            <strong>🔥 바울형:</strong> 사명을 다하고 순교·완주하는 삶<br>
+            <strong>🌿 엘리야형:</strong> 자연사하며 신앙 유산을 다음 세대에 전수하는 삶 ⭐
         </div>
 
-        <h3>📝 나의 ERP 경로</h3>
+        <h3>📝 나의 마침 유형 선택</h3>
         <select id="erp-type" onchange="showERPGuide()">
             <option value="">선택하세요</option>
-            <option value="paul">ERP-P: 바울형</option>
-            <option value="elisha">ERP-E: 엘리사형 ⭐</option>
-            <option value="enoch">ERP-T: 에녹형</option>
+            <option value="paul">🔥 바울형 — 사명 완주</option>
+            <option value="elisha">🌿 엘리야형 — 유산 전수 ⭐</option>
         </select>
 
         <div id="erp-guide-container"></div>
 
         <!-- ERP-E 준비 체크리스트 -->
         <details style="margin-top: 16px;">
-            <summary>📖 ERP-E 준비 체크리스트</summary>
+            <summary>📖 엘리야형 준비 체크리스트</summary>
             <div style="margin-top: 12px; background: white; padding: 14px; border-radius: 10px;">
                 <h4 style="color: #2c5282; margin: 0 0 10px;">✅ 생전 준비 사항</h4>
                 <div style="font-size: 0.85em; line-height: 2;">
@@ -1599,7 +1597,7 @@
                     ☐ <strong>소천 후 희망:</strong> 장례 예배 형식, 찬양 곡 등
                 </div>
                 <div style="margin-top: 12px; background: #f0fff4; border: 1px solid #38a169; padding: 10px; border-radius: 8px; font-size: 0.82em; color: #276749;">
-                    ✨ <strong>핵심:</strong> ERP는 "죽음 준비"가 아니라 <strong>"유산 전수"</strong>입니다. 내가 받은 은혜를 다음 세대에 온전히 전달하는 것이 목표입니다.
+                    ✨ <strong>핵심:</strong> 마침 준비는 "죽음 준비"가 아니라 <strong>"유산 전수"</strong>입니다. 내가 받은 은혜를 다음 세대에 온전히 전달하는 것이 목표입니다.
                 </div>
             </div>
         </details>
@@ -3033,9 +3031,9 @@
             container.innerHTML = entries.sort((a,b) => new Date(b.date)-new Date(a.date)).map(e => {
                 const d = new Date(e.date).toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
                 return '<div class="journal-entry">'
-                    + '<div style="display:flex;gap:4px;float:right;">'
-                    + '<button class="j-del" style="background:#f6ad55;color:white;" onclick="editBibleEntry(\'' + e.id + '\')" title="수정">✏️</button>'
-                    + '<button class="j-del" onclick="deleteBibleEntry(\'' + e.id + '\')">✕</button>'
+                    + '<div style="display:flex;gap:12px;float:right;">'
+                    + '<button style="background:#f6ad55;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="editBibleEntry(\'' + e.id + '\')" title="수정">✏️ 수정</button>'
+                    + '<button style="background:#e53e3e;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="deleteBibleEntry(\'' + e.id + '\')">🗑 삭제</button>'
                     + '</div>'
                     + '<div class="j-date">' + d + '</div>'
                     + (e.verse ? '<div class="j-verse">📖 ' + e.verse + '</div>' : '')
@@ -3144,9 +3142,9 @@
                 return '<div class="prayer-req">'
                     + '<div style="display:flex;justify-content:space-between;align-items:center;">'
                     + '<div class="pr-title">' + emoji + ' ' + p.title + '</div>'
-                    + '<div style="display:flex;gap:4px;">'
-                    + '<button onclick="editPrayer(\'' + p.id + '\')" style="background:#f6ad55;border:none;color:white;border-radius:6px;padding:2px 8px;cursor:pointer;font-size:0.85em;">✏️</button>'
-                    + '<button onclick="deletePrayer(\'' + p.id + '\')" style="background:none;border:none;color:#e53e3e;cursor:pointer;">✕</button>'
+                    + '<div style="display:flex;gap:10px;">'
+                    + '<button onclick="editPrayer(\'' + p.id + '\')" style="background:#f6ad55;border:none;color:white;border-radius:8px;padding:6px 14px;font-size:0.95em;cursor:pointer;">✏️ 수정</button>'
+                    + '<button onclick="deletePrayer(\'' + p.id + '\')" style="background:#e53e3e;border:none;color:white;border-radius:8px;padding:6px 14px;font-size:0.95em;cursor:pointer;">🗑 삭제</button>'
                     + '</div>'
                     + '</div>'
                     + (p.detail ? '<div style="color:#4a5568;font-size:0.9em;margin-top:2px;">' + p.detail + '</div>' : '')
@@ -3284,9 +3282,9 @@
             container.innerHTML = entries.sort((a,b) => new Date(b.date)-new Date(a.date)).map(e => {
                 const d = new Date(e.date).toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
                 return '<div class="journal-entry" style="border-left-color:#d69e2e;">'
-                    + '<div style="display:flex;gap:4px;float:right;">'
-                    + '<button class="j-del" style="background:#f6ad55;color:white;" onclick="editThanksEntry(\'' + e.id + '\')" title="수정">✏️</button>'
-                    + '<button class="j-del" onclick="deleteThanksEntry(\'' + e.id + '\')">✕</button>'
+                    + '<div style="display:flex;gap:12px;float:right;">'
+                    + '<button style="background:#f6ad55;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="editThanksEntry(\'' + e.id + '\')" title="수정">✏️ 수정</button>'
+                    + '<button style="background:#e53e3e;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="deleteThanksEntry(\'' + e.id + '\')">🗑 삭제</button>'
                     + '</div>'
                     + '<div class="j-date">🙌 ' + d + '</div>'
                     + '<div class="j-text">' + e.note.replace(/\n/g,'<br>') + '</div>'
