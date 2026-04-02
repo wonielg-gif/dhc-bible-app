@@ -2265,6 +2265,12 @@
                                 </div>
                                 <input type="text" id="pray-memo-title" placeholder="Title or keyword (e.g., Decision for family)" style="width:100%;padding:8px 10px;border:1px solid #d6bcfa;border-radius:8px;font-size:0.88em;margin-bottom:6px;font-family:inherit;" />
                                 <textarea id="pray-memo-content" placeholder="Record thoughts that arise during prayer..." style="width:100%;min-height:90px;border:1px solid #d6bcfa;border-radius:8px;padding:8px;font-size:0.88em;resize:vertical;font-family:inherit;"></textarea>
+                                <div class="bulletin-upload" style="border-color:#805ad5;background:rgba(128,90,213,0.05);" onclick="document.getElementById('pray-photo-file').click()">
+                                    📸 Add Photo (optional)<br>
+                                    <small style="color:#805ad5;">Prayer notes, Scripture cards, etc.</small>
+                                </div>
+                                <input type="file" id="pray-photo-file" accept="image/*" style="display:none" onchange="handlePrayPhotoUpload(event)" />
+                                <div id="pray-photo-thumbs" style="margin-top:6px;"></div>
                                 <div style="display:flex;gap:6px;margin-top:6px;">
                                     <button onclick="savePrayMemo()" class="journal-save-btn" style="background:#805ad5;flex:1;">📝 Save Memove</button>
                                     <button onclick="clearPrayMemo()" style="padding:6px 12px;background:#e2e8f0;color:#4a5568;border:none;border-radius:8px;font-size:0.82em;cursor:pointer;">Clear</button>
@@ -2955,6 +2961,8 @@
             localStorage.setItem('dhc_pray_memo', JSON.stringify(memos));
             document.getElementById('pray-memo-title').value = '';
             document.getElementById('pray-memo-content').value = '';
+            const ppt = document.getElementById('pray-photo-thumbs'); if(ppt) ppt.innerHTML = '';
+            prayPhotoData = null;
             renderPrayMemoHistory();
             openParentDetails('pray-memo-history');
             alert('✅ Memo saved.');
@@ -2980,13 +2988,13 @@
                     + '<button class="j-del" onclick="deletePrayMemo(\'' + m.id + '\')">✕</button>'
                     + '<div class="j-date">🙏 ' + d + '</div>'
                     + (m.title ? '<div class="j-verse" style="color:#553c9a;">📌 ' + m.title + '</div>' : '')
-                    + '<div class="j-text">' + m.content.replace(/\n/g,'<br>') + '</div>'
+                    + '<div class="j-text">' + m.content.replace(/\n/g,'<br>') + (m.photo ? '<div style="margin-top:6px;"><img src="' + m.photo + '" class="bulletin-thumb" onclick="viewBulletin(this.src)" style="border:2px solid #805ad5;" /></div>' : '') + '</div>'
                     + '</div>';
             }).join('');
         }
 
-        function deletePrayMemo(id) {
-            if (!confirm('Delete this memo?')) return;
+         function deletePrayMemo(id) {
+            if (!confirm('Delete this prayer memo?')) return;
             let memos = JSON.parse(localStorage.getItem('dhc_pray_memo') || '[]');
             memos = memos.filter(m => m.id !== id);
             localStorage.setItem('dhc_pray_memo', JSON.stringify(memos));
@@ -3001,11 +3009,14 @@
             const entries = JSON.parse(localStorage.getItem('ewgf_bible_journal') || '[]');
             entries.push({
                 id: 'b_' + Date.now(), date: new Date().toISOString(),
-                verse: verse, note: note
+                verse: verse, note: note, photo: biblePhotoData || null
             });
             localStorage.setItem('ewgf_bible_journal', JSON.stringify(entries));
             document.getElementById('bible-verse-input').value = '';
             document.getElementById('bible-note-input').value = '';
+            const bpt = document.getElementById('bible-photo-thumbs');
+            if (bpt) bpt.innerHTML = '';
+            biblePhotoData = null;
             renderBibleHistory();
             openParentDetails('bible-history');
             showSavedBadge('bible-history');
@@ -3030,11 +3041,43 @@
                     + '<div class="j-date">' + d + '</div>'
                     + (e.verse ? '<div class="j-verse">📖 ' + e.verse + '</div>' : '')
                     + (e.note ? '<div class="j-text">' + e.note.replace(/\n/g,'<br>') + '</div>' : '')
+                    + (e.photo ? '<div style="margin-top:6px;"><img src="' + e.photo + '" class="bulletin-thumb" onclick="viewBulletin(this.src)" style="border:2px solid #4299e1;" /></div>' : '')
                     + '</div>';
             }).join('');
         }
 
         
+        
+        // ========== 묵상 사진 업로드 ==========
+        let biblePhotoData = null;
+        function handleBiblePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 50 * 1024 * 1024) { alert('⚠️ 50MB 이하 사진만 첨부 가능합니다.'); return; }
+            const reader = new FileReader();
+            reader.onload = () => {
+                biblePhotoData = reader.result;
+                const thumbs = document.getElementById('bible-photo-thumbs');
+                if (thumbs) thumbs.innerHTML = '<img src="' + biblePhotoData + '" class="bulletin-thumb" onclick="viewBulletin(this.src)" style="border:2px solid #4299e1;" />';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ========== 기도 사진 업로드 ==========
+        let prayPhotoData = null;
+        function handlePrayPhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 50 * 1024 * 1024) { alert('⚠️ 50MB 이하 사진만 첨부 가능합니다.'); return; }
+            const reader = new FileReader();
+            reader.onload = () => {
+                prayPhotoData = reader.result;
+                const thumbs = document.getElementById('pray-photo-thumbs');
+                if (thumbs) thumbs.innerHTML = '<img src="' + prayPhotoData + '" class="bulletin-thumb" onclick="viewBulletin(this.src)" style="border:2px solid #805ad5;" />';
+            };
+            reader.readAsDataURL(file);
+        }
+
         // ========== 편집 기능 ==========
         function editBibleEntry(id) {
             const entries = JSON.parse(localStorage.getItem('ewgf_bible_journal') || '[]');
@@ -3734,7 +3777,7 @@
             { id:1,  axisIdx:0, axis:'Temptation', sub:'(1/3)',
               text:'In recent weeks, have you fallen into temptation or committed sin?',
               verse:'1Cor 10:13 — "God is faithful; He will not let you be tempted beyond what you can bear..."',
-              ewgf:'EWGF: Dependence on God comes before willpower (Will).', reverse:false },
+              ewgf:'Faith Principle: Dependence on God comes before willpower (Will).', reverse:false },
             { id:2,  axisIdx:0, axis:'Temptation', sub:'(2/3)',
               text:'When temptation arises, do you hesitate or compromise instead of fleeing immediately?',
               verse:'Jas 1:14-15 — "Each person is tempted when they are dragged away by their own evil desire..."',
@@ -3742,13 +3785,13 @@
             { id:3,  axisIdx:0, axis:'Temptation', sub:'(3/3)',
               text:'When tempted, have you overcome it by holding onto Scripture?',
               verse:'Matt 4:4 — "Man shall not live on bread alone, but on every word that comes from the mouth of God."',
-              ewgf:'EWGF Growth: The Word is a shield against temptation.', reverse:true },
+              ewgf:'Growth Point: The Word is a shield against temptation.', reverse:true },
 
             // ── Axis 1: Repentance ──────────────────────────
             { id:4,  axisIdx:1, axis:'Repentance', sub:'(1/3)',
               text:'When you sin, do you genuinely repent before God?',
               verse:'Ps 51:4 — "Against You, You only, have I sinned and done what is evil in Your sight..."',
-              ewgf:'EWGF: Repentance is a change of direction (Will) toward God.', reverse:true },
+              ewgf:'Faith Principle: Repentance is a change of direction (Will) toward God.', reverse:true },
             { id:5,  axisIdx:1, axis:'Repentance', sub:'(2/3)',
               text:'After repenting, do you take decisive action to not return to that sin?',
               verse:'Prov 28:13 — "Whoever conceals their sins does not prosper, but the one who confesses and renounces them finds mercy."',
@@ -3762,7 +3805,7 @@
             { id:7,  axisIdx:2, axis:'Trust in God', sub:'(1/3)',
               text:'Even in difficult circumstances, do you believe in God\'s goodness?',
               verse:'Rom 8:28 — "In all things God works for the good of those who love Him, who have been called..."',
-              ewgf:'EWGF: Faith is trust (Will) that transcends circumstances.', reverse:true },
+              ewgf:'Faith Principle: Faith is trust (Will) that transcends circumstances.', reverse:true },
             { id:8,  axisIdx:2, axis:'Trust in God', sub:'(2/3)',
               text:'Do you trust in God\'s provision more than worry about the future?',
               verse:'Phil 4:19 — "My God will meet all your needs according to the riches of His glory in Christ Jesus."',
@@ -3776,7 +3819,7 @@
             { id:10, axisIdx:3, axis:'People-Pleasing', sub:'(1/3)',
               text:'Do you change your behavior out of fear of others\' opinions or evaluation?',
               verse:'Gal 1:10 — "Am I now trying to win approval of human beings, or of God?... If I were still trying to please people, I would not be a servant of Christ."',
-              ewgf:'EWGF: Approval addiction strips the sovereignty of Will.', reverse:false },
+              ewgf:'Faith Principle: Approval addiction strips the sovereignty of Will.', reverse:false },
             { id:11, axisIdx:3, axis:'People-Pleasing', sub:'(2/3)',
               text:'Do you excessively care about others\' reactions or SNS ratings?',
               verse:'Prov 29:25 — "Fear of man will prove to be a snare, but whoever trusts in the Lord is kept safe."',
@@ -3784,13 +3827,13 @@
             { id:12, axisIdx:3, axis:'People-Pleasing', sub:'(3/3)',
               text:'Do you feel it is enough to be approved by God alone?',
               verse:'2Cor 5:9 — "So we make it our goal to please Him, whether we are at home in the body or away from it."',
-              ewgf:'EWGF Growth: God\'s approval is the highest goal.', reverse:true },
+              ewgf:'Growth Point: God\'s approval is the highest goal.', reverse:true },
 
             // ── Axis 4: Anger/Complaint ────────────────────────────
             { id:13, axisIdx:4, axis:'Anger/Complaint', sub:'(1/3)',
               text:'Recently, do anger or complaints frequently arise in your heart?',
               verse:'Jas 1:20 — "Human anger does not produce the righteousness that God desires."',
-              ewgf:'EWGF: Anger flows into Sin\'s Valley, not God\'s Valley', reverse:false },
+              ewgf:'Faith Principle: Anger flows into Sin\'s Valley, not God\'s Valley', reverse:false },
             { id:14, axisIdx:4, axis:'Anger/Complaint', sub:'(2/3)',
               text:'Do you stay hurt for a long time over small mistakes or rudeness from others?',
               verse:'Eccl 7:9 — "Do not be quickly provoked in your spirit, for anger resides in the lap of fools."',
@@ -3798,13 +3841,13 @@
             { id:15, axisIdx:4, axis:'Anger/Complaint', sub:'(3/3)',
               text:'When angry, can you control your words and actions?',
               verse:'Prov 16:32 — "Better a patient person than a warrior, one with self-control than one who takes a city."',
-              ewgf:'EWGF: Self-control (Will) is a fruit of the Spirit and greatest strength.', reverse:true },
+              ewgf:'Faith Principle: Self-control (Will) is a fruit of the Spirit and greatest strength.', reverse:true },
 
             // ── Axis 5: Obedience ───────────────────────────────
             { id:16, axisIdx:5, axis:'Obedience', sub:'(1/3)',
               text:'Do you strive to obey God\'s Word immediately upon hearing it?',
               verse:'1Sam 15:22 — "To obey is better than sacrifice, and to heed is better than the fat of rams."',
-              ewgf:'EWGF Will: Immediate obedience is the mark of mature faith.', reverse:true },
+              ewgf:'Will Training: Immediate obedience is the mark of mature faith.', reverse:true },
             { id:17, axisIdx:5, axis:'Obedience', sub:'(2/3)',
               text:'Do you act according to the Word even when it is uncomfortable or costly?',
               verse:'Jas 1:22 — "Do not merely listen to the Word, and so deceive yourselves. Do what it says."',
@@ -3826,7 +3869,7 @@
             { id:21, axisIdx:6, axis:'Addiction Pattern', sub:'(3/3)',
               text:'Do you recognize repeating patterns and actively seek help?',
               verse:'Heb 12:1 — "Let us throw off everything that hinders and the sin that so easily entangles..."',
-              ewgf:'EWGF Growth: Asking for help is wisdom, not weakness.', reverse:true },
+              ewgf:'Growth Point: Asking for help is wisdom, not weakness.', reverse:true },
 
             // ── Axis 7: Self-Hatred/Shame ──────────────────────
             { id:22, axisIdx:7, axis:'Self-Hatred/Shame', sub:'(1/3)',
@@ -3840,7 +3883,7 @@
             { id:24, axisIdx:7, axis:'Self-Hatred/Shame', sub:'(3/3)',
               text:'Do you trust that you are accepted in Christ even after failure?',
               verse:'2Cor 5:17 — "If anyone is in Christ, the new creation has come: The old has gone, the new is here!"',
-              ewgf:'EWGF: Grace-based self-acceptance is the foundation of spiritual growth.', reverse:true }
+              ewgf:'Faith Principle: Grace-based self-acceptance is the foundation of spiritual growth.', reverse:true }
         ];
 
         const MAUM_CHARACTERS = [

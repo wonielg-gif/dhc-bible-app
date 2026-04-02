@@ -1622,7 +1622,7 @@
                         아빠는 30살에 예수님을 만났다. 그 전까지는 내 힘으로 살았고, 교만했고, 외로웠다. 
                         하지만 십자가 앞에 무릎 꿇었을 때, 비로소 진정한 자유를 얻었단다. 
                         너는 아빠보다 일찍 예수님을 만났으니, 평생 그분 안에 거하며 살기를 바란다.<br><br>
-                        <strong>둘째, 매일 DCP(말씀, 기도, 예배, 감사, 전도)를 실천해라.</strong><br>
+                        <strong>둘째, 매일 말씀·기도·예배·감사·전도를 실천해라.</strong><br>
                         이것이 아빠 인생을 바꾸었다. 처음엔 힘들었지만, 지금은 이것이 가장 큰 기쁨이다. 
                         너도 2-3단계의 갈등을 겪겠지만, 포기하지 마라. 4단계의 기쁨이 반드시 온다.<br><br>
                         <strong>셋째, 네가 받은 은혜를 다음 세대에 흘려보내라.</strong><br>
@@ -1643,8 +1643,8 @@
                         "사랑하는 민수 집사님,<br><br>
                         우리가 처음 만난 것이 10년 전이네요. 당신이 2단계에서 힘들어할 때, 제가 곁에 있을 수 있어서 감사했습니다.<br><br>
                         <strong>당신에게 부탁하고 싶은 것:</strong><br><br>
-                        1. <strong>EWGF를 다음 세대에 전하세요.</strong> 우리가 함께 공부했던 5단계 프레임워크를 
-                        당신의 제자들에게 가르쳐주세요. 특히 2→3단계 전환이 가장 어렵다는 것을 기억하시고, 
+                        1. <strong>제자 양육을 다음 세대에 전하세요.</strong> 우리가 함께 걸어온 신앙의 여정을 
+                        당신의 제자들에게 가르쳐주세요. 특히 초기 신앙 성장이 가장 어렵다는 것을 기억하시고, 
                         그들이 포기하지 않도록 곁에 있어주세요.<br><br>
                         2. <strong>중보기도를 멈추지 마세요.</strong> 당신이 7명을 위해 기도하기 시작했을 때, 
                         당신의 인생이 바뀌었죠. 그 은혜를 잊지 마시고, 평생 중보자로 서주세요.<br><br>
@@ -2190,6 +2190,12 @@
                             <div class="journal-area">
                                 <input type="text" id="bible-verse-input" placeholder="📖 말씀 구절 (예: 시편 23:1-6)" />
                                 <textarea id="bible-note-input" placeholder="오늘 묵상한 내용, 은혜받은 말씀, 적용할 점을 기록하세요..."></textarea>
+                                <div class="bulletin-upload" style="border-color:#4299e1;background:rgba(66,153,225,0.05);" onclick="document.getElementById('bible-photo-file').click()">
+                                    📸 묵상 사진 첨부 (선택)<br>
+                                    <small style="color:#4299e1;">말씀 필기, 묵상 노트 사진 등</small>
+                                </div>
+                                <input type="file" id="bible-photo-file" accept="image/*" style="display:none" onchange="handleBiblePhotoUpload(event)" />
+                                <div id="bible-photo-thumbs" style="margin-top:6px;"></div>
                                 <button class="journal-save-btn" onclick="saveBibleEntry()">💾 묵상 저장</button>
                             </div>
                         </details>
@@ -2273,6 +2279,12 @@
                                 </div>
                                 <input type="text" id="pray-memo-title" placeholder="제목 또는 핵심 단어 (예: 가족을 위한 결단)" style="width:100%;padding:8px 10px;border:1px solid #d6bcfa;border-radius:8px;font-size:0.88em;margin-bottom:6px;font-family:inherit;" />
                                 <textarea id="pray-memo-content" placeholder="기도 중 떠오른 내용을 자유롭게 기록하세요...&#10;&#10;예) 하나님께서 00에 대해 맡기라고 하심&#10;예) 00을 위해 더 기도해야겠다는 감동&#10;예) 말씀이 떠올라 적용하고 싶다" style="width:100%;min-height:90px;border:1px solid #d6bcfa;border-radius:8px;padding:8px;font-size:0.88em;resize:vertical;font-family:inherit;"></textarea>
+                                <div class="bulletin-upload" style="border-color:#805ad5;background:rgba(128,90,213,0.05);" onclick="document.getElementById('pray-photo-file').click()">
+                                    📸 기도 사진 첨부 (선택)<br>
+                                    <small style="color:#805ad5;">기도 제목 메모, 말씀 카드 등</small>
+                                </div>
+                                <input type="file" id="pray-photo-file" accept="image/*" style="display:none" onchange="handlePrayPhotoUpload(event)" />
+                                <div id="pray-photo-thumbs" style="margin-top:6px;"></div>
                                 <div style="display:flex;gap:6px;margin-top:6px;">
                                     <button onclick="savePrayMemo()" class="journal-save-btn" style="background:#805ad5;flex:1;">📝 메모 저장</button>
                                     <button onclick="clearPrayMemo()" style="padding:6px 12px;background:#e2e8f0;color:#4a5568;border:none;border-radius:8px;font-size:0.82em;cursor:pointer;">지우기</button>
@@ -2963,6 +2975,8 @@
             localStorage.setItem('dhc_pray_memo', JSON.stringify(memos));
             document.getElementById('pray-memo-title').value = '';
             document.getElementById('pray-memo-content').value = '';
+            const ppt = document.getElementById('pray-photo-thumbs'); if(ppt) ppt.innerHTML = '';
+            prayPhotoData = null;
             renderPrayMemoHistory();
             openParentDetails('pray-memo-history');
             alert('✅ 메모가 저장되었습니다.');
@@ -2988,13 +3002,12 @@
                     + '<button class="j-del" onclick="deletePrayMemo(\'' + m.id + '\')">✕</button>'
                     + '<div class="j-date">🙏 ' + d + '</div>'
                     + (m.title ? '<div class="j-verse" style="color:#553c9a;">📌 ' + m.title + '</div>' : '')
-                    + '<div class="j-text">' + m.content.replace(/\n/g,'<br>') + '</div>'
+                    + '<div class="j-text">' + m.content.replace(/\n/g,'<br>') + (m.photo ? '<div style="margin-top:6px;"><img src="' + m.photo + '" class="bulletin-thumb" onclick="viewBulletin(this.src)" style="border:2px solid #805ad5;" /></div>' : '') + '</div>'
                     + '</div>';
             }).join('');
         }
-
         function deletePrayMemo(id) {
-            if (!confirm('이 메모를 삭제하시겠습니까?')) return;
+            if (!confirm('이 기도 메모를 삭제하시겠습니까?')) return;
             let memos = JSON.parse(localStorage.getItem('dhc_pray_memo') || '[]');
             memos = memos.filter(m => m.id !== id);
             localStorage.setItem('dhc_pray_memo', JSON.stringify(memos));
@@ -3009,11 +3022,14 @@
             const entries = JSON.parse(localStorage.getItem('ewgf_bible_journal') || '[]');
             entries.push({
                 id: 'b_' + Date.now(), date: new Date().toISOString(),
-                verse: verse, note: note
+                verse: verse, note: note, photo: biblePhotoData || null
             });
             localStorage.setItem('ewgf_bible_journal', JSON.stringify(entries));
             document.getElementById('bible-verse-input').value = '';
             document.getElementById('bible-note-input').value = '';
+            const bpt = document.getElementById('bible-photo-thumbs');
+            if (bpt) bpt.innerHTML = '';
+            biblePhotoData = null;
             renderBibleHistory();
             openParentDetails('bible-history');
             showSavedBadge('bible-history');
@@ -3038,6 +3054,7 @@
                     + '<div class="j-date">' + d + '</div>'
                     + (e.verse ? '<div class="j-verse">📖 ' + e.verse + '</div>' : '')
                     + (e.note ? '<div class="j-text">' + e.note.replace(/\n/g,'<br>') + '</div>' : '')
+                    + (e.photo ? '<div style="margin-top:6px;"><img src="' + e.photo + '" class="bulletin-thumb" onclick="viewBulletin(this.src)" style="border:2px solid #4299e1;" /></div>' : '')
                     + '</div>';
             }).join('');
         }
@@ -3743,7 +3760,7 @@
             { id:1,  axisIdx:0, axis:'유혹·넘어짐', sub:'(1/3)',
               text:'최근 일주일간 유혹에 넘어가거나 죄를 범한 적이 있습니까?',
               verse:'고전 10:13 — "하나님은 미쁘사 너희가 감당할 수 없는 시험 당함을 허락하지 아니하시고…"',
-              ewgf:'EWGF: 의지력(Will)보다 하나님 의존이 먼저입니다', reverse:false },
+              ewgf:'신앙 원리: 의지력(Will)보다 하나님 의존이 먼저입니다', reverse:false },
             { id:2,  axisIdx:0, axis:'유혹·넘어짐', sub:'(2/3)',
               text:'유혹이 올라올 때 즉시 피하지 못하고 머뭇거리거나 타협합니까?',
               verse:'약 1:14-15 — "욕심이 잉태한즉 죄를 낳고 죄가 장성한즉 사망을 낳느니라"',
@@ -3751,13 +3768,13 @@
             { id:3,  axisIdx:0, axis:'유혹·넘어짐', sub:'(3/3)',
               text:'유혹이 올 때 말씀을 붙잡고 이겨낸 경험이 있습니까?',
               verse:'마 4:4 — "사람이 떡으로만 살 것이 아니요 하나님의 입으로 나오는 모든 말씀으로 살 것이라"',
-              ewgf:'EWGF Growth: 말씀이 유혹의 방패입니다', reverse:true },
+              ewgf:'성장 포인트: 말씀이 유혹의 방패입니다', reverse:true },
 
             // ── Axis 1: 회개의 깊이 ──────────────────────────
             { id:4,  axisIdx:1, axis:'회개의 깊이', sub:'(1/3)',
               text:'죄를 지었을 때 하나님 앞에서 진심으로 회개합니까?',
               verse:'시 51:4 — "내가 주께만 범죄하여 주의 목전에 악을 행하였사오니…"',
-              ewgf:'EWGF: 회개는 하나님을 향한 방향 전환(Will)입니다', reverse:true },
+              ewgf:'신앙 원리: 회개는 하나님을 향한 방향 전환(Will)입니다', reverse:true },
             { id:5,  axisIdx:1, axis:'회개의 깊이', sub:'(2/3)',
               text:'회개 후 다시 그 죄로 돌아가지 않으려 결단하고 행동합니까?',
               verse:'잠 28:13 — "자기 죄를 숨기는 자는 형통치 못하나 죄를 자복하고 버리는 자는 불쌍히 여김을 받으리라"',
@@ -3771,7 +3788,7 @@
             { id:7,  axisIdx:2, axis:'하나님 신뢰', sub:'(1/3)',
               text:'어려운 상황에서도 하나님의 선하심을 믿습니까?',
               verse:'롬 8:28 — "하나님을 사랑하는 자 곧 그 뜻대로 부르심을 입은 자들에게는 모든 것이 합력하여 선을 이루느니라"',
-              ewgf:'EWGF: 신앙은 환경을 초월하는 신뢰(Will)입니다', reverse:true },
+              ewgf:'신앙 원리: 신앙은 환경을 초월하는 신뢰(Will)입니다', reverse:true },
             { id:8,  axisIdx:2, axis:'하나님 신뢰', sub:'(2/3)',
               text:'미래에 대한 걱정보다 하나님의 공급하심을 신뢰합니까?',
               verse:'빌 4:19 — "나의 하나님이 그리스도 예수 안에서 영광 가운데 그 풍성한 대로 너희 모든 쓸 것을 채우시리라"',
@@ -3785,7 +3802,7 @@
             { id:10, axisIdx:3, axis:'사람 눈 의식', sub:'(1/3)',
               text:'사람들의 시선이나 평가가 두려워 행동을 바꿉니까?',
               verse:'갈 1:10 — "이제 내가 사람들에게 좋게 하랴 하나님께 좋게 하랴… 사람들에게 기쁨을 구하면 그리스도의 종이 아니리라"',
-              ewgf:'EWGF: 사람 인정 중독은 Will의 주권을 빼앗습니다', reverse:false },
+              ewgf:'신앙 원리: 사람 인정 중독은 Will의 주권을 빼앗습니다', reverse:false },
             { id:11, axisIdx:3, axis:'사람 눈 의식', sub:'(2/3)',
               text:'타인의 반응이나 SNS 평가에 지나치게 신경 씁니까?',
               verse:'잠 29:25 — "사람을 두려워하면 올무에 걸리게 되거니와 여호와를 의지하는 자는 안전하리라"',
@@ -3793,13 +3810,13 @@
             { id:12, axisIdx:3, axis:'사람 눈 의식', sub:'(3/3)',
               text:'하나님 앞에서만 인정받으면 충분하다고 느낍니까?',
               verse:'고후 5:9 — "그런즉 우리는 몸으로 있든지 떠나 있든지 주를 기쁘시게 하는 자가 되기를 힘쓰노라"',
-              ewgf:'EWGF Growth: 신 앞의 인정이 최고 목표입니다', reverse:true },
+              ewgf:'성장 포인트: 신 앞의 인정이 최고 목표입니다', reverse:true },
 
             // ── Axis 4: 분노·불만 ────────────────────────────
             { id:13, axisIdx:4, axis:'분노·불만', sub:'(1/3)',
               text:'최근 분노나 불평불만이 마음속에 자주 올라옵니까?',
               verse:'약 1:20 — "사람의 성내는 것이 하나님의 의를 이루지 못함이라"',
-              ewgf:'EWGF: 분노는 하나님 골짜기가 아닌 죄 골짜기로 흐릅니다', reverse:false },
+              ewgf:'신앙 원리: 분노는 하나님 골짜기가 아닌 죄 골짜기로 흐릅니다', reverse:false },
             { id:14, axisIdx:4, axis:'분노·불만', sub:'(2/3)',
               text:'타인의 작은 실수나 무례에도 마음이 상하고 오래 갑니까?',
               verse:'전 7:9 — "급한 마음으로 노를 발하지 말라 노는 우매자의 품에 머무름이니라"',
@@ -3807,13 +3824,13 @@
             { id:15, axisIdx:4, axis:'분노·불만', sub:'(3/3)',
               text:'화가 날 때 말과 행동을 절제할 수 있습니까?',
               verse:'잠 16:32 — "노하기를 더디 하는 자는 용사보다 낫고 자기의 마음을 다스리는 자는 성을 빼앗는 자보다 나으니라"',
-              ewgf:'EWGF: 절제(Will)는 성령의 열매이자 최고 강점입니다', reverse:true },
+              ewgf:'신앙 원리: 절제(Will)는 성령의 열매이자 최고 강점입니다', reverse:true },
 
             // ── Axis 5: 순종성 ───────────────────────────────
             { id:16, axisIdx:5, axis:'순종성', sub:'(1/3)',
               text:'하나님의 말씀을 듣고 즉시 순종하려 노력합니까?',
               verse:'삼상 15:22 — "순종이 제사보다 낫고 듣는 것이 숫양의 기름보다 나으니"',
-              ewgf:'EWGF Will: 즉각적 순종이 성숙한 신앙의 표지입니다', reverse:true },
+              ewgf:'의지 훈련: 즉각적 순종이 성숙한 신앙의 표지입니다', reverse:true },
             { id:17, axisIdx:5, axis:'순종성', sub:'(2/3)',
               text:'불편하거나 손해가 되어도 말씀대로 행합니까?',
               verse:'약 1:22 — "너희는 말씀을 행하는 자가 되고 듣기만 하여 자신을 속이는 자가 되지 말라"',
@@ -3835,7 +3852,7 @@
             { id:21, axisIdx:6, axis:'반복 중독성', sub:'(3/3)',
               text:'반복되는 패턴을 인식하고 적극적으로 도움을 구하고 있습니까?',
               verse:'히 12:1 — "모든 무거운 것과 얽매이기 쉬운 죄를 벗어버리고…"',
-              ewgf:'EWGF Growth: 도움 요청은 약함이 아니라 지혜입니다', reverse:true },
+              ewgf:'성장 포인트: 도움 요청은 약함이 아니라 지혜입니다', reverse:true },
 
             // ── Axis 7: 자기혐오·수치심 ──────────────────────
             { id:22, axisIdx:7, axis:'자기혐오·수치심', sub:'(1/3)',
@@ -3849,7 +3866,7 @@
             { id:24, axisIdx:7, axis:'자기혐오·수치심', sub:'(3/3)',
               text:'실패 후에도 그리스도 안에서 용납받았음을 신뢰합니까?',
               verse:'고후 5:17 — "누구든지 그리스도 안에 있으면 새로운 피조물이라 이전 것은 지나갔으니 보라 새 것이 되었도다"',
-              ewgf:'EWGF: 은혜로 인한 자기 수용이 성장의 토대입니다', reverse:true }
+              ewgf:'신앙 원리: 은혜로 인한 자기 수용이 성장의 토대입니다', reverse:true }
         ];
 
         const MAUM_CHARACTERS = [

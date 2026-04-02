@@ -2959,6 +2959,8 @@
             localStorage.setItem('dhc_pray_memo', JSON.stringify(memos));
             document.getElementById('pray-memo-title').value = '';
             document.getElementById('pray-memo-content').value = '';
+            const ppt = document.getElementById('pray-photo-thumbs'); if(ppt) ppt.innerHTML = '';
+            prayPhotoData = null;
             renderPrayMemoHistory();
             openParentDetails('pray-memo-history');
             alert('✅ Memo guardado.');
@@ -2984,13 +2986,13 @@
                     + '<button class="j-del" onclick="deletePrayMemo(\'' + m.id + '\')">✕</button>'
                     + '<div class="j-date">🙏 ' + d + '</div>'
                     + (m.title ? '<div class="j-verse" style="color:#553c9a;">📌 ' + m.title + '</div>' : '')
-                    + '<div class="j-text">' + m.content.replace(/\n/g,'<br>') + '</div>'
+                    + '<div class="j-text">' + m.content.replace(/\n/g,'<br>') + (m.photo ? '<div style="margin-top:6px;"><img src="' + m.photo + '" class="bulletin-thumb" onclick="viewBulletin(this.src)" style="border:2px solid #805ad5;" /></div>' : '') + '</div>'
                     + '</div>';
             }).join('');
         }
 
         function deletePrayMemo(id) {
-            if (!confirm('¿Eliminar este memo?')) return;
+            if (!confirm('¿Eliminar este memo de oración?')) return;
             let memos = JSON.parse(localStorage.getItem('dhc_pray_memo') || '[]');
             memos = memos.filter(m => m.id !== id);
             localStorage.setItem('dhc_pray_memo', JSON.stringify(memos));
@@ -3005,11 +3007,14 @@
             const entries = JSON.parse(localStorage.getItem('ewgf_bible_journal') || '[]');
             entries.push({
                 id: 'b_' + Date.now(), date: new Date().toISOString(),
-                verse: verse, note: note
+                verse: verse, note: note, photo: biblePhotoData || null
             });
             localStorage.setItem('ewgf_bible_journal', JSON.stringify(entries));
             document.getElementById('bible-verse-input').value = '';
             document.getElementById('bible-note-input').value = '';
+            const bpt = document.getElementById('bible-photo-thumbs');
+            if (bpt) bpt.innerHTML = '';
+            biblePhotoData = null;
             renderBibleHistory();
             openParentDetails('bible-history');
             showSavedBadge('bible-history');
@@ -3034,11 +3039,43 @@
                     + '<div class="j-date">' + d + '</div>'
                     + (e.verse ? '<div class="j-verse">📖 ' + e.verse + '</div>' : '')
                     + (e.note ? '<div class="j-text">' + e.note.replace(/\n/g,'<br>') + '</div>' : '')
+                    + (e.photo ? '<div style="margin-top:6px;"><img src="' + e.photo + '" class="bulletin-thumb" onclick="viewBulletin(this.src)" style="border:2px solid #4299e1;" /></div>' : '')
                     + '</div>';
             }).join('');
         }
 
         
+        
+        // ========== 묵상 사진 업로드 ==========
+        let biblePhotoData = null;
+        function handleBiblePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 50 * 1024 * 1024) { alert('⚠️ 50MB 이하 사진만 첨부 가능합니다.'); return; }
+            const reader = new FileReader();
+            reader.onload = () => {
+                biblePhotoData = reader.result;
+                const thumbs = document.getElementById('bible-photo-thumbs');
+                if (thumbs) thumbs.innerHTML = '<img src="' + biblePhotoData + '" class="bulletin-thumb" onclick="viewBulletin(this.src)" style="border:2px solid #4299e1;" />';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ========== 기도 사진 업로드 ==========
+        let prayPhotoData = null;
+        function handlePrayPhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 50 * 1024 * 1024) { alert('⚠️ 50MB 이하 사진만 첨부 가능합니다.'); return; }
+            const reader = new FileReader();
+            reader.onload = () => {
+                prayPhotoData = reader.result;
+                const thumbs = document.getElementById('pray-photo-thumbs');
+                if (thumbs) thumbs.innerHTML = '<img src="' + prayPhotoData + '" class="bulletin-thumb" onclick="viewBulletin(this.src)" style="border:2px solid #805ad5;" />';
+            };
+            reader.readAsDataURL(file);
+        }
+
         // ========== 편집 기능 ==========
         function editBibleEntry(id) {
             const entries = JSON.parse(localStorage.getItem('ewgf_bible_journal') || '[]');
@@ -3738,7 +3775,7 @@
             { id:1,  axisIdx:0, axis:'Tentación', sub:'(1/3)',
               text:'En la última semana, ¿has caído en tentación o pecado?',
               verse:'1Cor 10:13 — "Dios es fiel; no permitirá que sean tentados más allá de lo que puedan aguantar..."',
-              ewgf:'EWGF: La dependencia de Dios va antes que la fuerza de voluntad (Will).', reverse:false },
+              ewgf:'Principio de Fe: La dependencia de Dios va antes que la fuerza de voluntad (Will).', reverse:false },
             { id:2,  axisIdx:0, axis:'Tentación', sub:'(2/3)',
               text:'Cuando surge la tentación, ¿dudas o cedes en lugar de huir?',
               verse:'Sant 1:14-15 — "Cada uno es tentado cuando sus propios malos deseos lo arrastran y seducen..."',
@@ -3746,13 +3783,13 @@
             { id:3,  axisIdx:0, axis:'Tentación', sub:'(3/3)',
               text:'Cuando eres tentado, ¿has vencido aferrándote a la Escritura?',
               verse:'Mat 4:4 — "No solo de pan vive el hombre, sino de toda palabra que sale de la boca de Dios."',
-              ewgf:'EWGF Growth: La Palabra es un escudo contra la tentación.', reverse:true },
+              ewgf:'Punto de Crecimiento: La Palabra es un escudo contra la tentación.', reverse:true },
 
             // ── Axis 1: Arrepentimiento ──────────────────────────
             { id:4,  axisIdx:1, axis:'Arrepentimiento', sub:'(1/3)',
               text:'Cuando pecas, ¿te arrepientes genuinamente ante Dios?',
               verse:'Sal 51:4 — "Contra Ti, solo contra Ti, he pecado..."',
-              ewgf:'EWGF: El arrepentimiento es un cambio de dirección (Will) hacia Dios.', reverse:true },
+              ewgf:'Principio de Fe: El arrepentimiento es un cambio de dirección (Will) hacia Dios.', reverse:true },
             { id:5,  axisIdx:1, axis:'Arrepentimiento', sub:'(2/3)',
               text:'Después de arrepentirte, ¿tomas acción para no volver a ese pecado?',
               verse:'Prov 28:13 — "El que encubre su pecado no prosperará, pero el que lo confiesa y abandona recibirá misericordia."',
@@ -3766,7 +3803,7 @@
             { id:7,  axisIdx:2, axis:'Confianza en Dios', sub:'(1/3)',
               text:'Incluso en circunstancias difíciles, ¿crees en la bondad de Dios?',
               verse:'Rom 8:28 — "A los que aman a Dios, todas las cosas les ayudan a bien, esto es, a los que conforme a su propósito son llamados."',
-              ewgf:'EWGF: La fe es confianza (Will) que trasciende las circunstancias.', reverse:true },
+              ewgf:'Principio de Fe: La fe es confianza (Will) que trasciende las circunstancias.', reverse:true },
             { id:8,  axisIdx:2, axis:'Confianza en Dios', sub:'(2/3)',
               text:'¿Confías más en la provisión de Dios que en preocuparte por el futuro?',
               verse:'Fil 4:19 — "Mi Dios proveerá a todas vuestras necesidades conforme a sus riquezas en gloria en Cristo Jesús."',
@@ -3780,7 +3817,7 @@
             { id:10, axisIdx:3, axis:'Aprobación Humana', sub:'(1/3)',
               text:'¿Cambias tu comportamiento por miedo a las opiniones o evaluaciones de otros?',
               verse:'Gál 1:10 — "¿Busco ahora el favor de los hombres, o el de Dios?... Si todavía agradara a los hombres, no sería siervo de Cristo."',
-              ewgf:'EWGF: La adicción a la aprobación quita la soberanía de la Voluntad (Will).', reverse:false },
+              ewgf:'Principio de Fe: La adicción a la aprobación quita la soberanía de la Voluntad (Will).', reverse:false },
             { id:11, axisIdx:3, axis:'Aprobación Humana', sub:'(2/3)',
               text:'¿Te preocupas excesivamente por las reacciones de otros o las valoraciones en redes sociales?',
               verse:'Prov 29:25 — "El temor del hombre es una trampa, pero el que confía en el Señor está seguro."',
@@ -3788,13 +3825,13 @@
             { id:12, axisIdx:3, axis:'Aprobación Humana', sub:'(3/3)',
               text:'¿Sientes que es suficiente ser aprobado solo por Dios?',
               verse:'2Cor 5:9 — "Por eso nos esforzamos en agradarle, ya sea que vivamos en el cuerpo o fuera de él."',
-              ewgf:'EWGF Growth: La aprobación de Dios es el mayor objetivo.', reverse:true },
+              ewgf:'Punto de Crecimiento: La aprobación de Dios es el mayor objetivo.', reverse:true },
 
             // ── Axis 4: Ira/Queja ────────────────────────────
             { id:13, axisIdx:4, axis:'Ira/Queja', sub:'(1/3)',
               text:'Recientemente, ¿la ira o las quejas surgen frecuentemente en tu corazón?',
               verse:'Sant 1:20 — "La ira humana no produce la justicia que Dios desea."',
-              ewgf:'EWGF: La ira fluye hacia el Valle del Pecado, no hacia el Valle de Dios.', reverse:false },
+              ewgf:'Principio de Fe: La ira fluye hacia el Valle del Pecado, no hacia el Valle de Dios.', reverse:false },
             { id:14, axisIdx:4, axis:'Ira/Queja', sub:'(2/3)',
               text:'¿Te quedas herido por mucho tiempo ante pequeños errores de otros?',
               verse:'Ecl 7:9 — "No te apresures en tu espíritu a enojarte, porque el enojo reposa en el seno de los necios."',
@@ -3802,13 +3839,13 @@
             { id:15, axisIdx:4, axis:'Ira/Queja', sub:'(3/3)',
               text:'Cuando te enojas, ¿puedes controlar tus palabras y acciones?',
               verse:'Prov 16:32 — "Mejor es el lento para la ira que el poderoso; y el que domina su espíritu, que el que toma una ciudad."',
-              ewgf:'EWGF: El autocontrol (Will) es fruto del Espíritu y la mayor fortaleza.', reverse:true },
+              ewgf:'Principio de Fe: El autocontrol (Will) es fruto del Espíritu y la mayor fortaleza.', reverse:true },
 
             // ── Axis 5: Obediencia ───────────────────────────────
             { id:16, axisIdx:5, axis:'Obediencia', sub:'(1/3)',
               text:'¿Te esfuerzas en obedecer la Palabra de Dios inmediatamente al escucharla?',
               verse:'1Sam 15:22 — "La obediencia es mejor que el sacrificio, y el prestar atención, que la grasa de los carneros."',
-              ewgf:'EWGF Will: La obediencia inmediata es la marca de una fe madura.', reverse:true },
+              ewgf:'Entrenamiento de Voluntad: La obediencia inmediata es la marca de una fe madura.', reverse:true },
             { id:17, axisIdx:5, axis:'Obediencia', sub:'(2/3)',
               text:'¿Actúas conforme a la Palabra incluso cuando es incómodo o costoso?',
               verse:'Sant 1:22 — "Sean hacedores de la Palabra, y no tan solamente oidores, engañándose a sí mismos."',
@@ -3830,7 +3867,7 @@
             { id:21, axisIdx:6, axis:'Patrón Adictivo', sub:'(3/3)',
               text:'¿Reconoces los patrones repetitivos y buscas ayuda activamente?',
               verse:'Heb 12:1 — "Despojémonos de todo peso y del pecado que nos asedia..."',
-              ewgf:'EWGF Growth: Pedir ayuda es sabiduría, no debilidad.', reverse:true },
+              ewgf:'Punto de Crecimiento: Pedir ayuda es sabiduría, no debilidad.', reverse:true },
 
             // ── Axis 7: Odio Propio/Vergüenza ──────────────────────
             { id:22, axisIdx:7, axis:'Odio Propio/Vergüenza', sub:'(1/3)',
@@ -3844,7 +3881,7 @@
             { id:24, axisIdx:7, axis:'Odio Propio/Vergüenza', sub:'(3/3)',
               text:'¿Confías en que eres aceptado en Cristo incluso después de fallar?',
               verse:'2Cor 5:17 — "Si alguno está en Cristo, nueva criatura es; las cosas viejas pasaron, he aquí todas son hechas nuevas."',
-              ewgf:'EWGF: La autoaceptación por gracia es el fundamento del crecimiento espiritual.', reverse:true }
+              ewgf:'Principio de Fe: La autoaceptación por gracia es el fundamento del crecimiento espiritual.', reverse:true }
         ];
 
         const MAUM_CHARACTERS = [
