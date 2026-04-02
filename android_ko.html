@@ -3196,6 +3196,37 @@
         // ========== v2.0: 주일 예배 기록 ==========
         let bulletinData = null;
 
+        
+        // ========== 묵상 사진 업로드 ==========
+        let biblePhotoData = null;
+        function handleBiblePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 50 * 1024 * 1024) { alert('⚠️ 50MB 이하 사진만 첨부 가능합니다.'); return; }
+            const reader = new FileReader();
+            reader.onload = () => {
+                biblePhotoData = reader.result;
+                const thumbs = document.getElementById('bible-photo-thumbs');
+                if (thumbs) thumbs.innerHTML = '<img src="' + biblePhotoData + '" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid #4299e1;margin:4px;cursor:pointer;" onclick="viewBulletin(this.src)" />';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ========== 기도 사진 업로드 ==========
+        let prayPhotoData = null;
+        function handlePrayPhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 50 * 1024 * 1024) { alert('⚠️ 50MB 이하 사진만 첨부 가능합니다.'); return; }
+            const reader = new FileReader();
+            reader.onload = () => {
+                prayPhotoData = reader.result;
+                const thumbs = document.getElementById('pray-photo-thumbs');
+                if (thumbs) thumbs.innerHTML = '<img src="' + prayPhotoData + '" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid #805ad5;margin:4px;cursor:pointer;" onclick="viewBulletin(this.src)" />';
+            };
+            reader.readAsDataURL(file);
+        }
+
         function handleBulletinUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
