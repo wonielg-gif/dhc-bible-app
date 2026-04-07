@@ -1575,32 +1575,33 @@
 
     <!-- 마침 Prep. -->
     <div id="content-erp" class="content">
-        <h2>⚰️ ERP - Preparación Final</h2>
+        <h2>⚰️ Preparación Final</h2>
 
         <div class="alert alert-info">
             Prepárate con anticipación para el final de la vida.
         </div>
 
-        <h3>📊 3 Tipos de ERP</h3>
+        <h3>📊 2 Tipos de Final</h3>
         <div style="font-size: 0.85em; line-height: 1.8; background: white; padding: 14px; border-radius: 8px; margin: 12px 0;">
-            <strong>ERP-P (Tipo Pablo):</strong> Martirio / Completar Misión<br>
-            <strong>ERP-E (Tipo Eliseo):</strong> Muerte Natural / Transferir Legado ⭐<br>
+            <strong>🔥 Tipo Pablo:</strong> Martirio / Completar Misión<br>
+            <strong>🌿 Tipo Elías:</strong> Muerte Natural / Transferir Legado ⭐<br>
             <strong>ERP-T (Tipo Enoc):</strong> Arrebatamiento (Soberano)
         </div>
 
-        <h3>📝 Mi Camino ERP</h3>
+        <h3>📝 Elige Tu Tipo de Final</h3>
         <select id="erp-type" onchange="showERPGuide()">
-            <option value="">Seleccionar</option>
-            <option value="paul">ERP-P: Tipo Pablo</option>
-            <option value="elisha">ERP-E: Tipo Eliseo ⭐</option>
-            <option value="enoch">ERP-T: Tipo Enoc</option>
+            <option value="">Selecciona tu tipo...</option>
+            <option value="fake" style="display:none">xnar</option>
+            <option value="paul">🔥 Tipo Pablo — Misión Cumplida</option>
+            <option value="elisha">🌿 Tipo Elías — Transferencia de Legado ⭐</option>
+            
         </select>
 
         <div id="erp-guide-container"></div>
 
         <!-- ERP-E Prep. 체크리스트 -->
         <details style="margin-top: 16px;">
-            <summary>📖 Lista ERP-E Prep.</summary>
+            <summary>📖 Lista de Preparación — Tipo Elías</summary>
             <div style="margin-top: 12px; background: white; padding: 14px; border-radius: 10px;">
                 <h4 style="color: #2c5282; margin: 0 0 10px;">✅ Preparativos en Vida</h4>
                 <div style="font-size: 0.85em; line-height: 2;">
@@ -1611,7 +1612,7 @@
                     ☐ <strong>Deseos Póstumos:</strong> Formato del servicio fúnebre, canciones, etc.
                 </div>
                 <div style="margin-top: 12px; background: #f0fff4; border: 1px solid #38a169; padding: 10px; border-radius: 8px; font-size: 0.82em; color: #276749;">
-                    ✨ <strong>Punto Clave:</strong> ERP no es "Preparación para la Muerte" sino <strong>"Transferencia de Legado"</strong>El objetivo es transmitir la gracia que has recibido a la próxima generación.
+                    ✨ <strong>Punto Clave:</strong> La Preparación Final no es "prepararse para morir" sino <strong>"Transferencia de Legado"</strong>El objetivo es transmitir la gracia que has recibido a la próxima generación.
                 </div>
             </div>
         </details>
@@ -2148,9 +2149,9 @@
         ];
 
         const ERP_GUIDES = {
-            paul: { title: 'ERP-P: Tipo Pablo', desc: 'Martirio / Completar Misión', tasks: ['Siempre preparado', 'Práctica DCP de por vida', 'Vida sin arrepentimientos'] },
-            elisha: { title: 'ERP-E: Tipo Eliseo', desc: 'Muerte Natural / Transferir Legado', tasks: ['Identifica 2-3 mentoreados', 'Escribe el Testamento Espiritual', 'Prepara oraciones de bendición.', 'Graba video de testimonio', 'Reproducir discípulos'] },
-            enoch: { title: 'ERP-T: Tipo Enoc', desc: 'Arrebatamiento (Soberano)', tasks: ['DCP de por vida', 'Caminar con Dios', 'Esperar el retorno del Señor'] }
+            paul: { title: '🔥 Tipo Pablo — Tipo Pablo', desc: 'Martirio / Completar Misión', tasks: ['Siempre preparado', 'Práctica DCP de por vida', 'Vida sin arrepentimientos'] },
+            elisha: { title: '🌿 Tipo Elías', desc: 'Muerte Natural / Transferir Legado', tasks: ['Identifica 2-3 mentoreados', 'Escribe el Testamento Espiritual', 'Prepara oraciones de bendición.', 'Graba video de testimonio', 'Reproducir discípulos'] },
+            enoch: { title: 'hidden', desc: 'Arrebatamiento (Soberano)', tasks: ['DCP de por vida', 'Caminar con Dios', 'Esperar el retorno del Señor'] }
         };
 
         // ========== 상태 ==========
@@ -2189,6 +2190,12 @@
                             <div class="journal-area">
                                 <input type="text" id="bible-verse-input" placeholder="📖 Escritura (ej., Salmo 23:1-6)" />
                                 <textarea id="bible-note-input" placeholder="Registra la meditación de hoy, la gracia recibida y los puntos de aplicación..."></textarea>
+                                <div class="bulletin-upload" style="border-color:#4299e1;background:rgba(66,153,225,0.05);" onclick="document.getElementById('bible-photo-file').click()">
+                                    📸 Agregar Foto (opcional)<br>
+                                    <small style="color:#4299e1;">Notas de Escritura, fotos del diario, etc.</small>
+                                </div>
+                                <input type="file" id="bible-photo-file" accept="image/*" style="display:none" onchange="handleBiblePhotoUpload(event)" />
+                                <div id="bible-photo-thumbs" style="margin-top:6px;"></div>
                                 <button class="journal-save-btn" onclick="saveBibleEntry()">💾 Guardar</button>
                             </div>
                         </details>
@@ -2272,6 +2279,12 @@
                                 </div>
                                 <input type="text" id="pray-memo-title" placeholder="Título o palabra clave (ej., Decisión para la familia)" style="width:100%;padding:8px 10px;border:1px solid #d6bcfa;border-radius:8px;font-size:0.88em;margin-bottom:6px;font-family:inherit;" />
                                 <textarea id="pray-memo-content" placeholder="Registra pensamientos durante la oración..."></textarea>
+                                <div class="bulletin-upload" style="border-color:#805ad5;background:rgba(128,90,213,0.05);margin-top:6px;" onclick="document.getElementById('pray-photo-file').click()">
+                                    📸 Agregar Foto (opcional)<br>
+                                    <small style="color:#805ad5;">Notas de oración, tarjetas de Escritura, etc.</small>
+                                </div>
+                                <input type="file" id="pray-photo-file" accept="image/*" style="display:none" onchange="handlePrayPhotoUpload(event)" />
+                                <div id="pray-photo-thumbs" style="margin-top:6px;"></div>
                                 <div style="display:flex;gap:6px;margin-top:6px;">
                                     <button onclick="savePrayMemo()" class="journal-save-btn" style="background:#805ad5;flex:1;">📝 Guardar Memove</button>
                                     <button onclick="clearPrayMemo()" style="padding:6px 12px;background:#e2e8f0;color:#4a5568;border:none;border-radius:8px;font-size:0.82em;cursor:pointer;">Borrar</button>
@@ -2481,7 +2494,7 @@
             updateStats();
         }
 
-        // ========== ERP 가이드 ==========
+        // ========== Guía de Preparación Final ==========
         function showERPGuide() {
             const type = document.getElementById('erp-type').value;
             const container = document.getElementById('erp-guide-container');
@@ -3036,8 +3049,8 @@
                 const d = new Date(e.date).toLocaleDateString('es-ES', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
                 return '<div class="journal-entry">'
                     + '<div style="display:flex;gap:12px;float:right;">'
-                    + '<button style="background:#f6ad55;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="editBibleEntry(\'' + e.id + '\')" title="수정">✏️ 수정</button>'
-                    + '<button style="background:#e53e3e;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="deleteBibleEntry(\'' + e.id + '\')">🗑 삭제</button>'
+                    + '<button style="background:#f6ad55;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="editBibleEntry(\'' + e.id + '\')" title="수정">✏️ Editar</button>'
+                    + '<button style="background:#e53e3e;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="deleteBibleEntry(\'' + e.id + '\')">🗑 Eliminar</button>'
                     + '</div>'
                     + '<div class="j-date">' + d + '</div>'
                     + (e.verse ? '<div class="j-verse">📖 ' + e.verse + '</div>' : '')
@@ -3178,8 +3191,8 @@
                     + '<div style="display:flex;justify-content:space-between;align-items:center;">'
                     + '<div class="pr-title">' + emoji + ' ' + p.title + '</div>'
                     + '<div style="display:flex;gap:10px;">'
-                    + '<button onclick="editPrayer(\'' + p.id + '\')" style="background:#f6ad55;border:none;color:white;border-radius:8px;padding:6px 14px;font-size:0.95em;cursor:pointer;">✏️ 수정</button>'
-                    + '<button onclick="deletePrayer(\'' + p.id + '\')" style="background:#e53e3e;border:none;color:white;border-radius:8px;padding:6px 14px;font-size:0.95em;cursor:pointer;">🗑 삭제</button>'
+                    + '<button onclick="editPrayer(\'' + p.id + '\')" style="background:#f6ad55;border:none;color:white;border-radius:8px;padding:6px 14px;font-size:0.95em;cursor:pointer;">✏️ Editar</button>'
+                    + '<button onclick="deletePrayer(\'' + p.id + '\')" style="background:#e53e3e;border:none;color:white;border-radius:8px;padding:6px 14px;font-size:0.95em;cursor:pointer;">🗑 Eliminar</button>'
                     + '</div>'
                     + '</div>'
                     + (p.detail ? '<div style="color:#4a5568;font-size:0.9em;margin-top:2px;">' + p.detail + '</div>' : '')
@@ -3318,8 +3331,8 @@
                 const d = new Date(e.date).toLocaleDateString('es-ES', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
                 return '<div class="journal-entry" style="border-left-color:#d69e2e;">'
                     + '<div style="display:flex;gap:12px;float:right;">'
-                    + '<button style="background:#f6ad55;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="editThanksEntry(\'' + e.id + '\')" title="수정">✏️ 수정</button>'
-                    + '<button style="background:#e53e3e;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="deleteThanksEntry(\'' + e.id + '\')">🗑 삭제</button>'
+                    + '<button style="background:#f6ad55;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="editThanksEntry(\'' + e.id + '\')" title="수정">✏️ Editar</button>'
+                    + '<button style="background:#e53e3e;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="deleteThanksEntry(\'' + e.id + '\')">🗑 Eliminar</button>'
                     + '</div>'
                     + '<div class="j-date">🙌 ' + d + '</div>'
                     + '<div class="j-text">' + e.note.replace(/\n/g,'<br>') + '</div>'

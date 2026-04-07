@@ -1571,21 +1571,21 @@
 
     <!-- 마침 Prep -->
     <div id="content-erp" class="content">
-        <h2>⚰️ ERP - Ending Prep</h2>
+        <h2>⚰️ Ending Preparation</h2>
 
         <div class="alert alert-info">
             Prepare in advance for the end of life.
         </div>
 
-        <h3>📊 3 ERP Types</h3>
+        <h3>📊 2 Types of Ending</h3>
         <div style="font-size: 0.85em; line-height: 1.8; background: white; padding: 14px; border-radius: 8px; margin: 12px 0;">
             <strong>🔥 Paul Type:</strong> Fulfilling the mission to the end<br>
             <strong>🌿 Elijah Type:</strong> Passing on faith legacy to the next generation ⭐
         </div>
 
-        <h3>📝 My ERP Path</h3>
+        <h3>📝 Choose Your Ending Type</h3>
         <select id="erp-type" onchange="showERPGuide()">
-            <option value="">Select</option>
+            <option value="">Select your type...</option>
             <option value="paul">Paul Type: Paul Type</option>
             <option value="elisha">Elijah Type: Elisha Type ⭐</option>
             
@@ -1606,7 +1606,7 @@
                     ☐ <strong>After-Death Wishes:</strong> Funeral service format, worship songs, etc.
                 </div>
                 <div style="margin-top: 12px; background: #f0fff4; border: 1px solid #38a169; padding: 10px; border-radius: 8px; font-size: 0.82em; color: #276749;">
-                    ✨ <strong>Key Point:</strong> ERP is not "Death Prep" but <strong>"Legacy Transfer"</strong>The goal is to fully pass on the grace you received to the next generation.
+                    ✨ <strong>Key Point:</strong> Ending Preparation is not "Death Prep" but <strong>"Legacy Transfer"</strong>The goal is to fully pass on the grace you received to the next generation.
                 </div>
             </div>
         </details>
@@ -2143,7 +2143,8 @@
         ];
 
         const ERP_GUIDES = {
-            paul: { title: 'Paul Type: Paul Type', desc: 'Martyrdom / Mission Completion', tasks: ['Always prepared', 'Lifelong DCP practice', 'Life without regret'] },
+            paul: { title: 'Paul Type — Mission Complete', desc: 'Fulfilling the mission to the end', tasks: ['Daily Scripture & Prayer','Discipleship of successors','Leave written testimony','Video recording of faith journey'], pray: 'Lord, help me complete my mission to the end like Paul.' },
+            fake: { title: 'xype', desc: 'Martyrdom / Mission Completion', tasks: ['Always prepared', 'Lifelong DCP practice', 'Life without regret'] },
             elisha: { title: 'Elijah Type: Elisha Type', desc: 'Natural Death / Legacy Transfer', tasks: ['Identify 2-3 mentees', 'Write Spiritual Testament', 'Prepare blessing prayers', 'Record testimony video', 'Reproduce disciples'] },
             enoch: { title: ': Enoch Type', desc: 'Rapture (Sovereign)', tasks: ['Lifelong DCP', 'Walk with God', "Await the Lord's return"] }
         };
@@ -2184,6 +2185,12 @@
                             <div class="journal-area">
                                 <input type="text" id="bible-verse-input" placeholder="📖 Scripture (e.g., Psalm 23:1-6)" />
                                 <textarea id="bible-note-input" placeholder="Record today's meditation, grace received, and application points..."></textarea>
+                                <div class="bulletin-upload" style="border-color:#4299e1;background:rgba(66,153,225,0.05);" onclick="document.getElementById('bible-photo-file').click()">
+                                    📸 Add Photo (optional)<br>
+                                    <small style="color:#4299e1;">Scripture notes, meditation journal photos, etc.</small>
+                                </div>
+                                <input type="file" id="bible-photo-file" accept="image/*" style="display:none" onchange="handleBiblePhotoUpload(event)" />
+                                <div id="bible-photo-thumbs" style="margin-top:6px;"></div>
                                 <button class="journal-save-btn" onclick="saveBibleEntry()">💾 Save</button>
                             </div>
                         </details>
@@ -2267,6 +2274,12 @@
                                 </div>
                                 <input type="text" id="pray-memo-title" placeholder="Title or keyword (e.g., Decision for family)" style="width:100%;padding:8px 10px;border:1px solid #d6bcfa;border-radius:8px;font-size:0.88em;margin-bottom:6px;font-family:inherit;" />
                                 <textarea id="pray-memo-content" placeholder="Record thoughts that arise during prayer..." style="width:100%;min-height:90px;border:1px solid #d6bcfa;border-radius:8px;padding:8px;font-size:0.88em;resize:vertical;font-family:inherit;"></textarea>
+                                <div class="bulletin-upload" style="border-color:#805ad5;background:rgba(128,90,213,0.05);margin-top:6px;" onclick="document.getElementById('pray-photo-file').click()">
+                                    📸 Add Photo (optional)<br>
+                                    <small style="color:#805ad5;">Prayer notes, Scripture cards, etc.</small>
+                                </div>
+                                <input type="file" id="pray-photo-file" accept="image/*" style="display:none" onchange="handlePrayPhotoUpload(event)" />
+                                <div id="pray-photo-thumbs" style="margin-top:6px;"></div>
                                 <div class="bulletin-upload" style="border-color:#805ad5;background:rgba(128,90,213,0.05);" onclick="document.getElementById('pray-photo-file').click()">
                                     📸 Add Photo (optional)<br>
                                     <small style="color:#805ad5;">Prayer notes, Scripture cards, etc.</small>
@@ -2482,7 +2495,7 @@
             updateStats();
         }
 
-        // ========== ERP 가이드 ==========
+        // ========== Ending Guide ==========
         function showERPGuide() {
             const type = document.getElementById('erp-type').value;
             const container = document.getElementById('erp-guide-container');
@@ -3037,8 +3050,8 @@
                 const d = new Date(e.date).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
                 return '<div class="journal-entry">'
                     + '<div style="display:flex;gap:12px;float:right;">'
-                    + '<button style="background:#f6ad55;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="editBibleEntry(\'' + e.id + '\')" title="수정">✏️ 수정</button>'
-                    + '<button style="background:#e53e3e;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="deleteBibleEntry(\'' + e.id + '\')">🗑 삭제</button>'
+                    + '<button style="background:#f6ad55;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="editBibleEntry(\'' + e.id + '\')" title="수정">✏️ Edit</button>'
+                    + '<button style="background:#e53e3e;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="deleteBibleEntry(\'' + e.id + '\')">🗑 Delete</button>'
                     + '</div>'
                     + '<div class="j-date">' + d + '</div>'
                     + (e.verse ? '<div class="j-verse">📖 ' + e.verse + '</div>' : '')
@@ -3179,8 +3192,8 @@
                     + '<div style="display:flex;justify-content:space-between;align-items:center;">'
                     + '<div class="pr-title">' + emoji + ' ' + p.title + '</div>'
                     + '<div style="display:flex;gap:10px;">'
-                    + '<button onclick="editPrayer(\'' + p.id + '\')" style="background:#f6ad55;border:none;color:white;border-radius:8px;padding:6px 14px;font-size:0.95em;cursor:pointer;">✏️ 수정</button>'
-                    + '<button onclick="deletePrayer(\'' + p.id + '\')" style="background:#e53e3e;border:none;color:white;border-radius:8px;padding:6px 14px;font-size:0.95em;cursor:pointer;">🗑 삭제</button>'
+                    + '<button onclick="editPrayer(\'' + p.id + '\')" style="background:#f6ad55;border:none;color:white;border-radius:8px;padding:6px 14px;font-size:0.95em;cursor:pointer;">✏️ Edit</button>'
+                    + '<button onclick="deletePrayer(\'' + p.id + '\')" style="background:#e53e3e;border:none;color:white;border-radius:8px;padding:6px 14px;font-size:0.95em;cursor:pointer;">🗑 Delete</button>'
                     + '</div>'
                     + '</div>'
                     + (p.detail ? '<div style="color:#4a5568;font-size:0.9em;margin-top:2px;">' + p.detail + '</div>' : '')
@@ -3319,8 +3332,8 @@
                 const d = new Date(e.date).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
                 return '<div class="journal-entry" style="border-left-color:#d69e2e;">'
                     + '<div style="display:flex;gap:12px;float:right;">'
-                    + '<button style="background:#f6ad55;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="editThanksEntry(\'' + e.id + '\')" title="수정">✏️ 수정</button>'
-                    + '<button style="background:#e53e3e;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="deleteThanksEntry(\'' + e.id + '\')">🗑 삭제</button>'
+                    + '<button style="background:#f6ad55;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="editThanksEntry(\'' + e.id + '\')" title="수정">✏️ Edit</button>'
+                    + '<button style="background:#e53e3e;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="deleteThanksEntry(\'' + e.id + '\')">🗑 Delete</button>'
                     + '</div>'
                     + '<div class="j-date">🙌 ' + d + '</div>'
                     + '<div class="j-text">' + e.note.replace(/\n/g,'<br>') + '</div>'
