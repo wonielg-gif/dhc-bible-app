@@ -2376,6 +2376,19 @@
                     ${expandSections[item.id] || ''}
                 </div>
             `).join('');
+
+            // DCP 카드 DOM 생성 직후 일지 즉시 렌더링
+            setTimeout(function(){
+                try { renderBibleHistory(); } catch(e){}
+                try { renderPrayerList(); } catch(e){}
+                try { renderWorshipHistory(); } catch(e){}
+                try { renderThanksHistory(); } catch(e){}
+                try { renderPrayMemoHistory(); } catch(e){}
+                ['bible-history','worship-history','thanks-history',
+                 'pray-memo-history','prayer-list-container'].forEach(function(id){
+                    try { openParentDetails(id); } catch(e){}
+                });
+            }, 100);
         }
 
         // ========== 진단 카드 렌더링 ==========
