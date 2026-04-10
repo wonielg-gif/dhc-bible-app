@@ -2011,6 +2011,41 @@
             </div>
         </div>
 
+        
+        <!-- 데이터 백업/복원 섹션 -->
+        <div style="background:white;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.07);margin-bottom:10px;overflow:hidden;">
+            <button onclick="toggleAccordion('acc-backup')" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:13px 16px;background:none;border:none;cursor:pointer;text-align:left;">
+                <span style="font-size:0.9em;font-weight:700;color:#2b6cb0;">📤 데이터 백업 / 복원</span>
+                <span id="acc-backup-icon">▼</span>
+            </button>
+            <div id="acc-backup" style="display:block;padding:0 16px 16px;">
+                <!-- 내보내기 -->
+                <div style="background:#ebf8ff;border-radius:10px;padding:14px;margin-bottom:10px;">
+                    <div style="font-size:0.82em;color:#2c5282;margin-bottom:10px;line-height:1.6;">
+                        📤 <strong>내 데이터 내보내기 (백업)</strong><br>
+                        <span style="font-size:0.9em;opacity:0.85;">모든 일지·기도제목·통계를 파일로 저장합니다.<br>다른 기기로 옮길 때 사용하세요.</span>
+                    </div>
+                    <button onclick="exportAllData()" style="width:100%;padding:11px;background:#2b6cb0;color:white;border:none;border-radius:8px;font-size:0.92em;font-weight:700;cursor:pointer;font-family:inherit;">
+                        📤 내 데이터 내보내기 (백업)
+                    </button>
+                </div>
+                <!-- 가져오기 -->
+                <div style="background:#f0fff4;border-radius:10px;padding:14px;">
+                    <div style="font-size:0.82em;color:#276749;margin-bottom:10px;line-height:1.6;">
+                        📥 <strong>데이터 가져오기 (복원)</strong><br>
+                        <span style="font-size:0.9em;opacity:0.85;">내보낸 파일을 선택하면 모든 데이터가 복원됩니다.</span>
+                    </div>
+                    <div style="font-size:0.75em;color:#c53030;background:#fff5f5;border-radius:6px;padding:6px 10px;margin-bottom:8px;">
+                        ⚠️ 주의: 가져오기 시 현재 데이터가 덮어씌워집니다.
+                    </div>
+                    <button onclick="importAllData()" style="width:100%;padding:11px;background:#38a169;color:white;border:none;border-radius:8px;font-size:0.92em;font-weight:700;cursor:pointer;font-family:inherit;">
+                        📥 데이터 가져오기 (복원)
+                    </button>
+                    <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="handleImportFile(event)">
+                </div>
+            </div>
+        </div>
+
         <!-- 기도응답 모달 (ewgf_prayers 공유) -->
         <div id="pray-answer-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:9999;padding:20px;overflow-y:auto;">
             <div style="max-width:28rem;margin:80px auto;background:white;border-radius:16px;padding:24px;">
@@ -5566,6 +5601,67 @@
         }
 
         // ── 아코디언 토글 ────────────────────────────────────
+        
+        
+        // ========== 데이터 내보내기/가져오기 ==========
+        function exportAllData() {
+            try {
+                var keys = ["dcp_history","dhc_bible2026","dhc_details_open","dhc_free_reading","dhc_pray_memo","dhc_stat_start_date","dhc_witness_success","dhc_yearly_stats","ewgf_app_version","ewgf_bible_journal","ewgf_prayer_time","ewgf_prayers","ewgf_testaments","ewgf_thanks_journal","ewgf_timer_bg_ts","ewgf_worship_journal","maum_diagnosis","selected_type"];
+                var data = { _version: 'DHC_v4.6', _exported: new Date().toISOString() };
+                keys.forEach(function(k) {
+                    var v = localStorage.getItem(k);
+                    if (v !== null) data[k] = v;
+                });
+                var json = JSON.stringify(data, null, 2);
+                var blob = new Blob([json], { type: 'application/json' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                var d = new Date();
+                var stamp = d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2);
+                a.href = url;
+                a.download = 'dhc_backup_' + stamp + '.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                alert('데이터 내보내기 완료! 파일을 저장하거나 카카오톡/이메일로 전송하세요.');
+            } catch(e) {
+                alert('오류: ' + e.message);
+            }
+        }
+        function importAllData() {
+            var input = document.getElementById('import-file-input');
+            if (input) input.click();
+        }
+        function handleImportFile(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+            if (!confirm('데이터를 가져오면 현재 데이터가 덮어씌워집니다. 계속하시겠습니까?')) {
+                event.target.value = '';
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    var data = JSON.parse(e.target.result);
+                    if (!data._version || data._version.indexOf('DHC') < 0) {
+                        alert('파일 형식이 올바르지 않습니다. 내보내기로 생성한 파일을 선택하세요.');
+                        return;
+                    }
+                    var keys = ["dcp_history","dhc_bible2026","dhc_details_open","dhc_free_reading","dhc_pray_memo","dhc_stat_start_date","dhc_witness_success","dhc_yearly_stats","ewgf_app_version","ewgf_bible_journal","ewgf_prayer_time","ewgf_prayers","ewgf_testaments","ewgf_thanks_journal","ewgf_timer_bg_ts","ewgf_worship_journal","maum_diagnosis","selected_type"];
+                    keys.forEach(function(k) {
+                        if (data[k] !== undefined) localStorage.setItem(k, data[k]);
+                    });
+                    alert('데이터 가져오기 완료! 앱을 새로고침합니다.');
+                    location.reload();
+                } catch(ex) {
+                    alert('파일 형식이 올바르지 않습니다.');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
         function toggleAccordion(id) {
             const el   = document.getElementById(id);
             const icon = document.getElementById(id + '-icon');
