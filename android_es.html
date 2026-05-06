@@ -1188,7 +1188,7 @@
                     <span style="font-weight:700;color:#2563eb;">⑦</span> Patrón Adictivo &nbsp;<span style="font-weight:700;color:#2563eb;">⑧</span> Odio Propio/Vergüenza
                 </p>
                 <div style="font-size:0.8em;color:#4a5568;margin-top:8px;padding:8px;background:#ebf8ff;border-radius:8px;">
-                    📌 Cada pregunta incluye <strong>Principios de Crecimiento Espiritual + Base Bíblica</strong>
+                    📌 Cada pregunta incluye <strong>Escrituras y contenido</strong>
                 </div>
             </div>
 
@@ -1479,7 +1479,7 @@
                  border:1.5px solid #fed7d7;border-radius:10px;font-size:0.72em;
                  color:#742a2a;line-height:1.8;">
                 <div style="font-weight:700;color:#c53030;margin-bottom:4px;">
-                    📋 Criterios de Éxito en Evangelismo (ERL Interno)
+                    📋 Criterios de Éxito en Evangelismo
                 </div>
                 Las siguientes <strong>condiciones deben cumplirse:</strong><br>
                 ① Aceptó a Jesucristo <strong>aceptar a Jesucristo</strong>por libre voluntad<br>
@@ -1635,7 +1635,7 @@
                         Tú conociste a Jesús antes que yo — permanece en Él toda la vida.<br><br>
                         <strong>Segundo, practica DCP diariamente (Escritura, Oración, Adoración, Gratitud, Evangelismo).</strong><br>
                         Esto cambió mi vida. Al principio era difícil, pero ahora es mi mayor alegría. 
-                        Enfrentarás luchas en las etapas 2–3, pero no te rindas. La alegría de la etapa 4 llegará.<br><br>
+                        Al principio habrá conflictos, pero si te adaptas, vendrá una gran alegría.<br><br>
                         <strong>Tercero, transmite la gracia que has recibido a la próxima generación.</strong><br>
                         Aprendí la fe del Pastor Juan y te la pasé a ti. 
                         Ahora debes transmitir esta fe a tus hijos y discípulos. 
@@ -1680,7 +1680,7 @@
                         porque la iglesia no respondió seriamente sus preguntas. 
                         Respeta sus dudas y respóndeles con tu vida.<br><br>
                         3. <strong>Sé luz en el mundo.</strong> La santidad no es solo dentro de la iglesia. 
-                        sino vivir tu identidad en el trabajo, en casa y con los vecinos — eso es adoración verdadera.<br><br>
+                        sino vivir tu identidad cristiana en el trabajo, en casa y con los vecinos — eso es adoración verdadera.<br><br>
                         Cada uno de ustedes es una obra maestra de Dios. 
                         Corran hasta el final como gobernantes redimidos.<br><br>
                         Hasta que nos encontremos de nuevo en el cielo,<br>
@@ -3043,12 +3043,32 @@
             container.innerHTML = memos.sort((a,b) => new Date(b.date)-new Date(a.date)).map(m => {
                 const d = new Date(m.date).toLocaleDateString('es-ES', {month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit'});
                 return '<div class="journal-entry" style="border-left-color:#805ad5;">'
-                    + '<button class="j-del" onclick="deletePrayMemo(\'' + m.id + '\')">✕</button>'
+                    + '<div style="display:flex;gap:10px;float:right;">'
+                    + '<button style="background:#f6ad55;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="editPrayMemo(\'' + m.id + '\')">✏️ Editar</button>'
+                    + '<button style="background:#e53e3e;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="deletePrayMemo(\'' + m.id + '\')">🗑 Eliminar</button>'
+                    + '</div>'
                     + '<div class="j-date">🙏 ' + d + '</div>'
                     + (m.title ? '<div class="j-verse" style="color:#553c9a;">📌 ' + m.title + '</div>' : '')
                     + '<div class="j-text">' + m.content.replace(/\n/g,'<br>') + (m.photo ? '<div style="margin-top:6px;"><img src="' + m.photo + '" class="bulletin-thumb" onclick="viewBulletin(this.src)" style="border:2px solid #805ad5;" /></div>' : '') + '</div>'
                     + '</div>';
             }).join('');
+        }
+
+        
+        function editPrayMemo(id) {
+            var memos = JSON.parse(localStorage.getItem('dhc_pray_memo') || '[]');
+            var m = null;
+            for(var i=0;i<memos.length;i++){if(memos[i].id===id){m=memos[i];break;}}
+            if (!m) return;
+            var titleEl = document.getElementById('pray-memo-title');
+            var contentEl = document.getElementById('pray-memo-content');
+            if (titleEl) titleEl.value = m.title || '';
+            if (contentEl) contentEl.value = m.content || '';
+            var newMemos = memos.filter(function(x){ return x.id !== id; });
+            localStorage.setItem('dhc_pray_memo', JSON.stringify(newMemos));
+            renderPrayMemoHistory();
+            if (contentEl) { try{contentEl.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){} contentEl.focus(); }
+            try{openParentDetails('pray-memo-history');}catch(e){}
         }
 
         function deletePrayMemo(id) {

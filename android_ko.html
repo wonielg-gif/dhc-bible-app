@@ -1179,7 +1179,7 @@
                     <span style="font-weight:700;color:#2563eb;">⑦</span> 반복 중독성 &nbsp;<span style="font-weight:700;color:#2563eb;">⑧</span> 자기혐오·수치심
                 </p>
                 <div style="font-size:0.8em;color:#4a5568;margin-top:8px;padding:8px;background:#ebf8ff;border-radius:8px;">
-                    📌 각 문항마다 <strong>EWGF 원칙 + 성경구절 근거</strong>가 제시됩니다
+                    📌 각 문항마다 <strong>성경구절과 내용</strong>이 제시됩니다
                 </div>
             </div>
 
@@ -1470,7 +1470,7 @@
                  border:1.5px solid #fed7d7;border-radius:10px;font-size:0.72em;
                  color:#742a2a;line-height:1.8;">
                 <div style="font-weight:700;color:#c53030;margin-bottom:4px;">
-                    📋 전도 성공 인정 기준 (ERL 내부 기준)
+                    📋 전도 성공 인정 기준
                 </div>
                 다음 <strong>4가지 조건을 모두 충족</strong>한 경우에 한합니다:<br>
                 ① 본인의 자유의지로 <strong>예수 그리스도를 영접</strong>하고<br>
@@ -1623,7 +1623,7 @@
                         너는 아빠보다 일찍 예수님을 만났으니, 평생 그분 안에 거하며 살기를 바란다.<br><br>
                         <strong>둘째, 매일 말씀·기도·예배·감사·전도를 실천해라.</strong><br>
                         이것이 아빠 인생을 바꾸었다. 처음엔 힘들었지만, 지금은 이것이 가장 큰 기쁨이다. 
-                        너도 2-3단계의 갈등을 겪겠지만, 포기하지 마라. 4단계의 기쁨이 반드시 온다.<br><br>
+                        너도 처음에 갈등이 있겠지만, 적응하다보면 큰 기쁨이 온다.<br><br>
                         <strong>셋째, 네가 받은 은혜를 다음 세대에 흘려보내라.</strong><br>
                         아빠는 이요한 목사님께 신앙을 배웠고, 너에게 물려주었다. 
                         이제 너는 네 자녀와 제자들에게 이 신앙을 전해야 한다. 
@@ -1668,7 +1668,7 @@
                         교회가 그들의 질문에 진지하게 답하지 않았기 때문입니다. 
                         그들의 의심을 존중하고, 삶으로 답해주세요.<br><br>
                         3. <strong>세상 속의 빛이 되세요.</strong> 교회 안에서만 거룩한 것이 아니라, 
-                        직장에서, 가정에서, 이웃 속에서 L0 정체성을 살아내는 것이 진짜 예배입니다.<br><br>
+                        직장에서, 가정에서, 이웃 속에서 그리스도인의 정체성을 살아내는 것이 진짜 예배입니다.<br><br>
                         여러분 한 분 한 분이 하나님의 걸작품입니다. 
                         부팅된 통치자로서 끝까지 달려주세요.<br><br>
                         하늘에서 다시 만날 때까지,<br>
@@ -3046,13 +3046,33 @@
             container.innerHTML = memos.sort((a,b) => new Date(b.date)-new Date(a.date)).map(m => {
                 const d = new Date(m.date).toLocaleDateString('ko-KR', {month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit'});
                 return '<div class="journal-entry" style="border-left-color:#805ad5;">'
-                    + '<button class="j-del" onclick="deletePrayMemo(\'' + m.id + '\')">✕</button>'
+                    + '<div style="display:flex;gap:10px;float:right;">'
+                    + '<button style="background:#f6ad55;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="editPrayMemo(\'' + m.id + '\')">✏️ 수정</button>'
+                    + '<button style="background:#e53e3e;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:1em;cursor:pointer;" onclick="deletePrayMemo(\'' + m.id + '\')">🗑 삭제</button>'
+                    + '</div>'
                     + '<div class="j-date">🙏 ' + d + '</div>'
                     + (m.title ? '<div class="j-verse" style="color:#553c9a;">📌 ' + m.title + '</div>' : '')
                     + '<div class="j-text">' + m.content.replace(/\n/g,'<br>') + (m.photo ? '<div style="margin-top:6px;"><img src="' + m.photo + '" class="bulletin-thumb" onclick="viewBulletin(this.src)" style="border:2px solid #805ad5;" /></div>' : '') + '</div>'
                     + '</div>';
             }).join('');
         }
+        
+        function editPrayMemo(id) {
+            var memos = JSON.parse(localStorage.getItem('dhc_pray_memo') || '[]');
+            var m = null;
+            for(var i=0;i<memos.length;i++){if(memos[i].id===id){m=memos[i];break;}}
+            if (!m) return;
+            var titleEl = document.getElementById('pray-memo-title');
+            var contentEl = document.getElementById('pray-memo-content');
+            if (titleEl) titleEl.value = m.title || '';
+            if (contentEl) contentEl.value = m.content || '';
+            var newMemos = memos.filter(function(x){ return x.id !== id; });
+            localStorage.setItem('dhc_pray_memo', JSON.stringify(newMemos));
+            renderPrayMemoHistory();
+            if (contentEl) { try{contentEl.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){} contentEl.focus(); }
+            try{openParentDetails('pray-memo-history');}catch(e){}
+        }
+
         function deletePrayMemo(id) {
             if (!confirm('이 기도 메모를 삭제하시겠습니까?')) return;
             let memos = JSON.parse(localStorage.getItem('dhc_pray_memo') || '[]');
